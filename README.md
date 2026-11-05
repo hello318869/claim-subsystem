@@ -1,13 +1,24 @@
-# 校园失物招领 · 失物认领子系统（后端 V1.0.1）
+# 校园失物招领 · 失物认领子系统（V1.1 交付）
 
-Python + FastAPI + SQLAlchemy + PyMySQL + **真实 MySQL** 的课程项目后端。只实现三块：
-**认领管理、匿名沟通、可解释规则匹配**，外加双向交接码。
+Python + FastAPI + SQLAlchemy + PyMySQL + **真实 MySQL** 的后端，加上 `web/` 静态前端。
+功能范围只有三块：**认领管理、匿名沟通、可解释规则匹配**，外加双向交接码。
+当前版本：后端 **V1.0.1**，前端 **CR-03 分组（FR-10）**。
 
 > 边界：**未对接**其他成员的真实发布/身份服务；**无真实校园数据**（演示数据 `origin=demo`）；
 > **非公网部署**；不实现账号注册、发布、争议裁决、管理后台。
-> V1.0.1 已在本机真实 HTTP + 隔离 MySQL 上测过：集成 118 passed、性能 900 请求 0 个 5xx、
-> 匹配 40 正例召回 39/40、12 负例 0 推荐。这些数字**不外推**到真实校园准确率或公网性能，
-> 详见 [`docs/baseline-v1.0.1.md`](docs/baseline-v1.0.1.md)。
+
+## 0. 交付状态
+
+| 项目 | 状态 | 证据 |
+| --- | --- | --- |
+| 后端基线 V1.0.1 | **178 项自动化通过**：49 unit + 118 integration + 11 performance | `evidence/test-run-v1.0.1.md` |
+| 匹配规则 `rules-v1.1` | 40 正例 Top3 召回 39/40；12 负例 0 推荐 | `evidence/matching-evaluation-v1.0.1.json` |
+| 性能（本机） | 20 并发 × 3 轮 × 900 请求，P95 认领 512.6 / 会话 217.7 / 匹配 670.8 ms，0 个 5xx | `evidence/performance-benchmark-v1.0.1.json` |
+| CR-03 分组 FR-10 | **10 项跨阶段回归通过**（RG-01~RG-08、RG-10 首轮；RG-09 修复后限定复测） | `evidence/ui-cr03-validation-attempt1.json`、`ui-cr03-rg09-final-run.json` |
+| 浏览器业务验证 | **15 项通过**；首轮因 `/favicon.ico` 404 记“未完全通过”，修复后干净首屏 0 资源错误 | `evidence/ui-validation.md`、`ui-cr03-validation.json` |
+
+说明：上表是历史证据的汇总；**本轮没有重跑 178 项自动化，也没有重测性能**。数字只对本机、
+隔离 MySQL、给定数据规模有效，不外推到真实校园准确率或公网性能。
 
 ## 1. 环境要求
 
@@ -16,7 +27,7 @@ Python + FastAPI + SQLAlchemy + PyMySQL + **真实 MySQL** 的课程项目后端
 | Windows | 10/11 + PowerShell 7 |
 | Python | 3.11+ |
 | MySQL | 8.0（由 `scripts/local_mysql.ps1` 在 WSL 内起独立实例，端口 **33307**） |
-| WSL | Ubuntu（仅用于跑隔离 MySQL，不用于跑应用） |
+| Node.js + Playwright | 仅浏览器验证需要（`scripts/ui_*.cjs`） |
 
 ## 2. 安装
 
@@ -48,7 +59,8 @@ python scripts/seed_demo.py --database dev     # 幂等，origin=demo
 python scripts/seed_demo.py --database test
 ```
 
-演示数据：`finder` 发布 5 条拾获记录（F-1001…F-1005），`alice` 有 2 条、`bob` 有 1 条失物记录（L-2001…L-2003），用于匹配、竞争与交接演示。
+演示数据：`finder` 发布 5 条拾获记录（F-1001…F-1005），`alice` 有 2 条、`bob` 有 1 条失物记录
+（L-2001…L-2003），用于匹配、竞争与交接演示。
 
 ## 5. 启动
 
@@ -56,9 +68,8 @@ python scripts/seed_demo.py --database test
 python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-- 接口文档：<http://127.0.0.1:8000/docs>
-- 健康检查：<http://127.0.0.1:8000/health>
-- 若 `web/` 由前端协作者放入，`/` 返回 `web/index.html`，`/static/*` 提供静态资源（无需改后端，重启即可）
+- 接口文档：<http://127.0.0.1:8000/docs>；健康检查：<http://127.0.0.1:8000/health>
+- 页面：<http://127.0.0.1:8000/>（`web/index.html`；`/static/*` 提供同目录资源）
 
 ## 6. 三角色演示（PowerShell）
 
@@ -68,7 +79,7 @@ function Token($actor) {
   (Invoke-RestMethod "$base/v1/demo/token" -Method Post -ContentType 'application/json' `
     -Body (@{actor=$actor} | ConvertTo-Json)).token
 }
-$a = Token alice; $f = Token finder; $o = Token outsider
+$a = Token alice; $f = Token finder
 $ha = @{ Authorization = "Bearer $a" }; $hf = @{ Authorization = "Bearer $f" }
 
 # 1) alice 看自己的失物匹配推荐（不自动认领）
@@ -89,7 +100,8 @@ Invoke-RestMethod "$base/v1/claims/$id/handover/confirm" -Method Post -Headers $
 Invoke-RestMethod "$base/v1/claims/$id/handover/confirm" -Method Post -Headers $hf -ContentType 'application/json' -Body (@{code=$codeA} | ConvertTo-Json)
 ```
 
-聊天：`POST /v1/claims/{id}/messages {"text":"..."}`；含手机号/邮箱/身份证号会被 **422** 拦截（编号请放 `item_number`）。
+页面上的“我的认领”默认显示**我发起的**，可切到**我收到的**；两组计数失败时显示“—/暂不可用”，
+不会伪造成 0。聊天含手机号/邮箱/身份证号会被 **422** 拦截（编号请放 `item_number`）。
 
 ## 7. 接口一览
 
@@ -98,7 +110,7 @@ Invoke-RestMethod "$base/v1/claims/$id/handover/confirm" -Method Post -Headers $
 | POST | `/v1/demo/token` | 仅 `DEMO_MODE=true` |
 | GET | `/v1/listings`、`/v1/listings/{id}` | 认证用户 |
 | POST | `/v1/claims` | 申请人 |
-| GET | `/v1/claims`、`/v1/claims/{id}` | 双方 |
+| GET | `/v1/claims`（`role=applicant\|finder\|all`）、`/v1/claims/{id}` | 双方 |
 | POST | `/v1/claims/{id}/withdraw` | 申请人 |
 | POST | `/v1/claims/{id}/approve`、`/reject` | 拾获方 |
 | POST | `/v1/claims/{id}/dispute` | 双方 |
@@ -110,36 +122,67 @@ Invoke-RestMethod "$base/v1/claims/$id/handover/confirm" -Method Post -Headers $
 
 字段、错误码与状态机见 [`docs/api-contract.md`](docs/api-contract.md)。
 
-## 8. 测试
+## 8. 测试与验证
+
+**后端自动化**（当前状态，见第 0 节证据）：
 
 ```powershell
-python -m pytest tests/unit -q                          # 纯函数与 DTO 用例
-$env:RUN_DB_TESTS='1'; python -m pytest tests/unit -q   # 追加真实 MySQL 契约用例
-python -m pytest tests/integration -q                   # 真实 HTTP + MySQL（测试协作者维护）
+python -m pytest tests/unit -q                          # 纯函数与 DTO
+$env:RUN_DB_TESTS='1'; python -m pytest tests/unit -q   # 追加真实 MySQL 契约
+python -m pytest tests/integration -q                   # 真实 HTTP + MySQL
+python -m pytest tests/performance -q                   # 性能策略
+python scripts/benchmark.py                             # 真实基准（自管 18080）
 ```
 
-V1.0.1 实测：`tests/unit` **49 passed**（含 16 个 DB 用例）、`tests/integration`
-**118 passed / 0 failed / 0 skipped**、`tests/performance` **11 passed**。
-DB 用例只使用 `T-F-900x` / `T-F-91xx` 临时记录，跑前跑后自行清理，不动演示数据。
+**匹配评测**（固定评测集，标签不可改）：
+
+```powershell
+python scripts/evaluate_matching.py --manifest tests/fixtures/seed-world.json --base-url http://127.0.0.1:18080
+```
+
+**浏览器验证**（需本机 Edge/Playwright；CR-03 脚本自建 18082 后端并自清理）：
+
+```powershell
+node scripts/ui_cr03.cjs                              # RG-01 ~ RG-10
+$env:CLAIM_UI_CASE='RG-09'; node scripts/ui_cr03.cjs   # 只复测 RG-09
+
+# 15 项业务/权限/版面检查：先用唯一前缀 seed，再用同一前缀运行
+python scripts/ui_fixture.py seed --prefix 'UI-QA-<唯一后缀>-'
+$env:CLAIM_UI_PREFIX='UI-QA-<同一前缀>-'; node scripts/ui_smoke.cjs
+```
 
 ## 9. 已知限制
 
-1. 交接码靠"服务端密钥 + nonce"重新派生，**恢复依赖密钥**；密钥轮换未实现。
+1. 交接码靠“服务端密钥 + nonce”重新派生，**恢复依赖密钥**；密钥轮换未实现。
 2. 聊天限流是**单进程内存**，多进程部署会失效。
 3. 手机号过滤会误伤以 `1[3-9]` 开头的 11 位物品编号（已接受，改用 `item_number`）。
-4. 匹配为可解释规则，评测集是合成数据且 `regression` 为已见回归集；0.975 不代表真实校园准确率。
+4. 匹配 0.975 来自合成数据，`regression` 为已见回归集，不代表真实校园准确率。
 5. 性能数据限本机、单进程、20 并发；不能外推公网或更高并发。
 6. 别名不阻止用户主动自报身份；平台侧仍可按内部 `user_id` 关联。
-7. 未实现证据自动删除、争议裁决、推送。
+7. 未实现证据自动删除、争议裁决、推送；CR-01 交接预约卡与 CR-02 驳回冷静期均**未实现**。
 8. 重置交接码的 `reason` 为**可选**；驳回与争议的 `reason` 必填且去空白后非空。
 
 ## 10. 文档
 
-- [`docs/baseline-v1.0.1.md`](docs/baseline-v1.0.1.md) 当前基线：版本、规则、环境、证据哈希
-- [`docs/api-contract.md`](docs/api-contract.md) 接口与 DTO 契约（冻结）
-- [`docs/srs-v1.0.md`](docs/srs-v1.0.md) 需求基线
+- [`docs/baseline-v1.0.1.md`](docs/baseline-v1.0.1.md) 后端基线：版本、规则、环境、证据哈希
+- [`docs/change-assessment.md`](docs/change-assessment.md) 三项变更的评估与裁决
+- [`docs/change-impact.md`](docs/change-impact.md) CR-03 影响分析（按 RTM 列）
+- [`docs/change-implementation.md`](docs/change-implementation.md) 三文件改动、SHA 与回退步骤
+- [`docs/change-regression-plan.md`](docs/change-regression-plan.md) RG-01~RG-10 执行记录
+- [`docs/srs-v1.1.md`](docs/srs-v1.1.md) 需求规格 v1.1（含 FR-10）
+- [`docs/srs-v1.0.md`](docs/srs-v1.0.md) 需求规格 v1.0（保留）
+- [`docs/rtm-v1.1.csv`](docs/rtm-v1.1.csv) 需求追踪矩阵 v1.1
+- [`docs/rtm-v1.0.csv`](docs/rtm-v1.0.csv) 需求追踪矩阵 v1.0（保留）
+- [`docs/api-contract.md`](docs/api-contract.md) 接口与 DTO 契约
 - [`docs/architecture-v1.0.md`](docs/architecture-v1.0.md) 架构与决策
 - [`docs/data-design.md`](docs/data-design.md) 表、索引、约束
 - [`docs/process-design.md`](docs/process-design.md) 三个核心时序
 - [`docs/defect-fixes-v1.0.1.md`](docs/defect-fixes-v1.0.1.md) 缺陷根因与修复对照
-- [`docs/rtm-v1.0.csv`](docs/rtm-v1.0.csv) 需求追踪矩阵（含证据列）
+
+## 11. 个人信息与最终裁决（由本人填写）
+
+- 姓名 / 学号：____________
+- 学生最终裁决（CR-01 / CR-02 / CR-03）：____________
+- 课程反思：____________
+
+> 以上留空，不代填。
