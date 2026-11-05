@@ -62,7 +62,8 @@
 
 1. 计数与列表不一致：先查是否残留过期响应（应带分组标记丢弃），再查是否读取了缓存。
 2. 身份串数据：立即停止发布，清空前端缓存后复测；仍失败则回滚。
-3. 回滚：`git checkout c62a0b2 -- web/index.html web/styles.css web/app.js`，刷新即可；后端与数据不动。
+3. 回滚：用实施前的三文件备份覆盖 `web/index.html`、`web/styles.css`、`web/app.js`，刷新即可；
+   后端与数据不动。本仓库当前不跟踪 `web/`，**不能**用 `git checkout` 回滚该目录。
 
 ## 7. 风险
 

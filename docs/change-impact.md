@@ -48,9 +48,13 @@
 ## 4. 回滚方案
 
 1. 触发条件：分组计数与列表不一致且无法在验收窗口内修复；或身份切换出现数据串扰。
-2. 步骤：`git checkout c62a0b2 -- web/index.html web/styles.css web/app.js`，刷新页面即可。
-3. 影响面：仅前端呈现；后端与数据无需回滚，已产生的认领数据不受影响。
-4. 回滚后仍保留 `role=all` 的 API 兼容性。
+2. 前置：**实施前先备份** `web/index.html`、`web/styles.css`、`web/app.js`
+   （如 `Copy-Item web\index.html,web\styles.css,web\app.js -Destination <备份目录>`）。
+3. 步骤：用备份覆盖上述三文件，刷新页面即可。
+4. 注意：本仓库当前**不跟踪** `web/`（该目录由前端会话维护），因此不能使用
+   `git checkout c62a0b2 -- web/...` 回滚；若前端会话已在自己的仓库提交，则回退其对应提交。
+5. 影响面：仅前端呈现；后端与数据无需回滚，已产生的认领数据不受影响。
+6. 回滚后仍保留 `role=all` 的 API 兼容性。
 
 ## 5. 明确不受影响
 
