@@ -1,0 +1,14 @@
+{
+  "git_head_at_evidence_export": "c62a0b27ba29f28ec0c51c77202c74209e45790c",
+  "sha256": {
+    "app/main.py": "af7c69d431438081f4de2226751491c11f02b8dad899c558d729b787c056ee90",
+    "app/services/chat_service.py": "df6896d8d20cacd97d7ba0a7b94c4756216f522151714bd0a8cd8c8d125236f3",
+    "app/services/handover_service.py": "dc03ca43c5ac7ed9e89770cf93172825fa53174bc2d4b10eb82f785b07c01b6d",
+    "app/idempotency.py": "9a21e7761d96b23a6a6e018834cf8b067f585a4673115d135e40341892e9f81e",
+    "web/index.html": "ad3a8561a3dcb514f49254a2e428fab10b1bb61b1e94cbe0f88c6be0edde13cd",
+    "web/app.js": "e07436de863c269025bfe9f69e84e2c906df89d1c442df003f2875e827ca7b00",
+    "web/styles.css": "c2280513faa04c38871141a75a62bd9a316231dc1dab41fc92dd50c8bb669a93",
+    "scripts/ui_smoke.cjs": "0cb3ed57f53af8a8db811982811af0804d8d876aded01a2a5bcbbc7fb79a5cf5",
+    "tmp/ui/ui_fixture.py": "72f5dfcb8139d030deeef3625a6928ebfc5e39ffd7d06058ed2d338950dc2a63"
+  }
+}

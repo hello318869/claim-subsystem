@@ -24,3 +24,7 @@ coverage.xml
 tmp/
 dist/
 build/
+
+# Regenerated test manifests and release statistics
+tests/fixtures/seed-world.json
+evidence/statistics/

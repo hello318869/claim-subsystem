@@ -1,0 +1,415 @@
+{
+  "schema": "cross-phase-ui-verification-v1",
+  "success": true,
+  "verified_across_phases": true,
+  "scope_statement": "RG01-RG08 and RG10 passed in phase 1. Only RG09 and clean console/favicon were rerun after its JavaScript fix. Final desktop/mobile screenshots were captured separately without rerunning the other business cases.",
+  "tests": [
+    {
+      "id": "RG-01",
+      "name": "默认分组",
+      "passed": true,
+      "detail": {
+        "active_group": "applicant",
+        "first_page_ids_match_api": true
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-02",
+      "name": "两组计数准确",
+      "passed": true,
+      "detail": {
+        "ui": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "2",
+            "state": "ready"
+          }
+        },
+        "api": {
+          "applicant": 23,
+          "finder": 2
+        }
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-03",
+      "name": "快速切组与迟到响应隔离",
+      "passed": true,
+      "detail": {
+        "quick_round_trips": 3,
+        "delayed_real_applicant_response_did_not_overwrite_finder": true
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-04",
+      "name": "分页与切组重置",
+      "passed": true,
+      "detail": {
+        "applicant_total": 23,
+        "page_two_exact": true,
+        "switch_resets_page": 1
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-05",
+      "name": "空组说明",
+      "passed": true,
+      "detail": {
+        "actual_api_total": 0,
+        "explicit_empty_states": true,
+        "zero_only_after_successful_total": true
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-06",
+      "name": "身份变化清空计数和私有内容",
+      "passed": true,
+      "detail": {
+        "identity_sequence": [
+          "alice",
+          "bob",
+          "outsider"
+        ],
+        "immediate_counts": "—",
+        "private_workspace_hidden": true
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-07",
+      "name": "第三方无详情或消息权限",
+      "passed": true,
+      "detail": {
+        "detail_http": 403,
+        "messages_http": 403,
+        "outsider_list_total": 0
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-08",
+      "name": "界面无混合入口且all兼容",
+      "passed": true,
+      "detail": {
+        "ui_roles": [
+          "applicant",
+          "finder"
+        ],
+        "all_http": 200,
+        "all_contains_only_related_ids": true
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    },
+    {
+      "id": "RG-09",
+      "name": "计数失败占位与恢复",
+      "passed": true,
+      "detail": {
+        "after_failed_switch": {
+          "applicant": {
+            "text": "—",
+            "state": "unavailable"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "after_failed_refresh": {
+          "applicant": {
+            "text": "—",
+            "state": "unavailable"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "failure_list_text": "我收到的申请加载失败\n\n无法连接后端服务。请检查服务是否已启动，以及页面与 API 是否同源。（错误码：NETWORK_ERROR）\n\n重试",
+        "after_restore_without_click": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "2",
+            "state": "ready"
+          }
+        },
+        "automatic_recovery": true,
+        "recovery_elapsed_ms": 35,
+        "online_events_dispatched": 5,
+        "recovery_requests": [
+          {
+            "role": "applicant",
+            "page": "1",
+            "page_size": "1",
+            "status": 200
+          },
+          {
+            "role": "finder",
+            "page": "1",
+            "page_size": "1",
+            "status": 200
+          },
+          {
+            "role": "finder",
+            "page": "1",
+            "page_size": "20",
+            "status": 200
+          }
+        ],
+        "valid_list_total_fallback": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "fallback_after_online": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "2",
+            "state": "ready"
+          }
+        }
+      },
+      "verification_phase": "phase-3-rg09-fix",
+      "source_file": "ui-cr03-rg09-final-run.json"
+    },
+    {
+      "id": "RG-10",
+      "name": "两组不重叠且并集等于all",
+      "passed": true,
+      "detail": {
+        "applicant": 23,
+        "finder": 2,
+        "intersection": 0,
+        "union": 25,
+        "all": 25
+      },
+      "verification_phase": "phase-1",
+      "source_file": "ui-cr03-validation-attempt1.json"
+    }
+  ],
+  "tests_total": 10,
+  "tests_passed": 10,
+  "current_run_tests": 1,
+  "current_source_sha256": {
+    "web/index.html": "13af85bf2f4222a5228c055e14701c0a55206c4d94edfd1e2669f461d7a8e7f9",
+    "web/app.js": "3b4f0527ae393df8b28adac1dc74c426f321402a67bfca95928209637c2deebc",
+    "web/styles.css": "02021b19855f28c388cd3e4465e5fac5c8e86166caee239e2fb5db05dc5fd4d0"
+  },
+  "source_unchanged_during_rg09_run": true,
+  "prior_phase_source_sha256": {
+    "web/index.html": "13af85bf2f4222a5228c055e14701c0a55206c4d94edfd1e2669f461d7a8e7f9",
+    "web/app.js": "33e9a736ba97d8b1511b9fee71e8cb4f10f2ff99c13ce6c6631d50e5ff81a94d",
+    "web/styles.css": "02021b19855f28c388cd3e4465e5fac5c8e86166caee239e2fb5db05dc5fd4d0"
+  },
+  "current_browser_version": "156.0.4314.58",
+  "final_clean_page": {
+    "console_errors": 0,
+    "page_errors": 0,
+    "favicon_requests": 0
+  },
+  "rg09_observations": {
+    "after_failed_switch": {
+      "applicant": {
+        "text": "—",
+        "state": "unavailable"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "after_failed_refresh": {
+      "applicant": {
+        "text": "—",
+        "state": "unavailable"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "failure_list_text": "我收到的申请加载失败\n\n无法连接后端服务。请检查服务是否已启动，以及页面与 API 是否同源。（错误码：NETWORK_ERROR）\n\n重试",
+    "after_restore_without_click": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "2",
+        "state": "ready"
+      }
+    },
+    "automatic_recovery": true,
+    "recovery_elapsed_ms": 35,
+    "online_events_dispatched": 5,
+    "recovery_requests": [
+      {
+        "role": "applicant",
+        "page": "1",
+        "page_size": "1",
+        "status": 200
+      },
+      {
+        "role": "finder",
+        "page": "1",
+        "page_size": "1",
+        "status": 200
+      },
+      {
+        "role": "finder",
+        "page": "1",
+        "page_size": "20",
+        "status": 200
+      }
+    ],
+    "valid_list_total_fallback": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "fallback_after_online": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "2",
+        "state": "ready"
+      }
+    }
+  },
+  "visual_capture_mobile": {
+    "passed": true,
+    "viewport": 390,
+    "document": 390
+  },
+  "selected_screenshots": [
+    {
+      "filename": "06-final-group-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\06-final-group-overview.png",
+      "scene": "latest-default-group",
+      "source_run": "ui-cr03-final-visual-capture.json",
+      "sha256": "d386dbe6090889a8c1ac262ab508f1ce5c458a99ad926d66a616176c2d91049e",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "04-count-unavailable-error.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\04-count-unavailable-error.png",
+      "scene": "latest-failed-count-unavailable",
+      "source_run": "ui-cr03-rg09-final-run.json",
+      "sha256": "2ffcd4814adaf5da138811edb79492114a2cabb16933e44335c77d72ac47a783",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "07-online-recovered-counts.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\07-online-recovered-counts.png",
+      "scene": "latest-online-recovery",
+      "source_run": "ui-cr03-rg09-final-run.json",
+      "sha256": "a62e6a1c36ce9df9a05d56de1768168ce52d3fe128c407e6af41c34085762bc9",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "05-mobile-390-group.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\05-mobile-390-group.png",
+      "scene": "latest-390px-group",
+      "source_run": "ui-cr03-final-visual-capture.json",
+      "sha256": "14e4f28a20b5a4c1033b73fc6c9cf2df17021c31fc852089e6e36e96f2d1461b",
+      "width": 390,
+      "height": 844,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    }
+  ],
+  "source_files": [
+    "ui-cr03-validation-attempt1.json",
+    "ui-cr03-validation-attempt2-rg09-before-fix.json",
+    "ui-cr03-rg09-final-run.json",
+    "ui-cr03-final-visual-capture.json"
+  ],
+  "failure_history_preserved": true,
+  "records_store_tokens_or_live_codes": false,
+  "cleanup": {
+    "rg09": {
+      "database": "claim_dev",
+      "prefix": "UI-QA-CR03-1793881196109-",
+      "deleted_only_own_fixture": {
+        "message_idempotency_records": 0,
+        "messages": 0,
+        "handover_codes": 0,
+        "idempotency_records": 26,
+        "audit_events": 26,
+        "item_approvals": 0,
+        "claims": 26,
+        "prefixed_idempotency_keys": 0,
+        "remaining_prefixed_audit": 0,
+        "listing_snapshots": 26
+      }
+    },
+    "visual_capture": {
+      "database": "claim_dev",
+      "prefix": "UI-QA-CR03-1793881375521-",
+      "deleted_only_own_fixture": {
+        "message_idempotency_records": 0,
+        "messages": 0,
+        "handover_codes": 0,
+        "idempotency_records": 26,
+        "audit_events": 26,
+        "item_approvals": 0,
+        "claims": 26,
+        "prefixed_idempotency_keys": 0,
+        "remaining_prefixed_audit": 0,
+        "listing_snapshots": 26
+      }
+    }
+  },
+  "own_servers_stopped": true,
+  "runtime_scope": {
+    "app_env": "dev",
+    "database": "claim_dev",
+    "mysql_port": 33307,
+    "app_port": 18082,
+    "claim_test_or_18080_touched": false
+  },
+  "reproduction_files": {
+    "scripts/ui_cr03.cjs": "a9a6d28715803083900da8a014977b433e68ce5cf190288816b3d9f817647ace",
+    "scripts/ui_smoke.cjs": "f5f93ed94497f4d1af464e904cb260fa8f349586c76e696b03d6536a5b24c87e",
+    "scripts/ui_fixture.py": "ca998ebe2736bfe130f29b15039e858ccc0215c678fc6f1c7859e962ea8000e1"
+  }
+}

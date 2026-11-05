@@ -1,0 +1,348 @@
+{
+  "tool": "benchmark",
+  "status": "passed",
+  "generated_at": "2026-11-05T19:53:39+08:00",
+  "mode": "live-http-real-mysql",
+  "mock_used": false,
+  "base_url": "http://127.0.0.1:18080",
+  "run_id": "b16397dd",
+  "environment": {
+    "database": {
+      "version": "8.0.46-0ubuntu0.24.04.4",
+      "database": "claim_test",
+      "current_user": "claim_app@127.0.0.1",
+      "port": 33307,
+      "max_connections": 30,
+      "innodb_buffer_pool_size": 67108864,
+      "transaction_isolation": "REPEATABLE-READ"
+    },
+    "server_threads_connected_before": 3,
+    "hardware": {
+      "platform": "Windows-10-10.0.26300-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "cpu_count": 32,
+      "python": "3.11.9",
+      "memory": {
+        "total_bytes": 33956970496,
+        "available_bytes": 5915844608,
+        "source": "GlobalMemoryStatusEx"
+      },
+      "note": "memory is null only when the platform probe is unavailable"
+    },
+    "backend_pool": {
+      "pool_size": 5,
+      "max_overflow": 5,
+      "max_connections_per_process": 10
+    }
+  },
+  "dataset": {
+    "origin": "perf-b16397dd",
+    "prefix": "T-PERF-b16397dd-",
+    "measured_counts": {
+      "listings": 1002,
+      "claims": 1,
+      "messages": 20
+    },
+    "declared_counts": {
+      "listings": 1000,
+      "claims": 1,
+      "messages": 20
+    },
+    "minimum_samples": 1000,
+    "sample_total": 1023
+  },
+  "connection_pool": {
+    "client_concurrency": 20,
+    "client_max_connections": 20,
+    "server_max_connections": 30,
+    "backend_pool": {
+      "pool_size": 5,
+      "max_overflow": 5,
+      "max_connections_per_process": 10
+    }
+  },
+  "workload": {
+    "rounds": 3,
+    "warmup_requests_per_endpoint": 10,
+    "requests_per_endpoint_per_round": 100,
+    "concurrency": 20,
+    "total_requests": 900,
+    "endpoints": [
+      {
+        "name": "claim_list",
+        "path": "/v1/claims?page=1&page_size=20"
+      },
+      {
+        "name": "conversation_read",
+        "path": "/v1/claims/f5ef12f7-74f7-4e2a-88d1-2a3776b17f76/messages"
+      },
+      {
+        "name": "matching",
+        "path": "/v1/matches?item_id=T-PERF-b16397dd-L"
+      }
+    ]
+  },
+  "thresholds": {
+    "p95_ms_per_endpoint": 1000.0,
+    "max_5xx": 0,
+    "max_uncaught_exceptions": 0,
+    "max_server_tracebacks": 0,
+    "min_requests_per_endpoint_per_round": 100,
+    "min_dataset_samples": 1000,
+    "percentile_method": "nearest-rank",
+    "warmup_excluded": true
+  },
+  "status_counts_per_round": {
+    "claim_list": {
+      "1": {
+        "200": 100
+      },
+      "2": {
+        "200": 100
+      },
+      "3": {
+        "200": 100
+      }
+    },
+    "conversation_read": {
+      "1": {
+        "200": 100
+      },
+      "2": {
+        "200": 100
+      },
+      "3": {
+        "200": 100
+      }
+    },
+    "matching": {
+      "1": {
+        "200": 100
+      },
+      "2": {
+        "200": 100
+      },
+      "3": {
+        "200": 100
+      }
+    }
+  },
+  "totals": {
+    "requests": 900,
+    "uncaught_exceptions": 0,
+    "5xx": 0,
+    "server_tracebacks": 0,
+    "server_asgi_exceptions": 0
+  },
+  "results": {
+    "passed": true,
+    "endpoints": {
+      "claim_list": {
+        "count": 300,
+        "status_counts": {
+          "200": 300
+        },
+        "p50_ms": 311.1074003390968,
+        "p95_ms": 512.5671997666359,
+        "p99_ms": 686.7014998570085,
+        "min_ms": 178.22719970718026,
+        "max_ms": 701.9846998155117,
+        "exceptions": 0,
+        "server_errors": 0,
+        "non_2xx": 0,
+        "rounds": {
+          "1": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 309.9708999507129,
+            "p95_ms": 526.9336001947522,
+            "p99_ms": 695.1338998042047,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "2": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 300.23649986833334,
+            "p95_ms": 475.7941998541355,
+            "p99_ms": 516.4719000458717,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "3": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 332.9918999224901,
+            "p95_ms": 527.222900185734,
+            "p99_ms": 686.7014998570085,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          }
+        },
+        "passed": true,
+        "failures": []
+      },
+      "conversation_read": {
+        "count": 300,
+        "status_counts": {
+          "200": 300
+        },
+        "p50_ms": 149.15329962968826,
+        "p95_ms": 217.72050019353628,
+        "p99_ms": 239.96259970590472,
+        "min_ms": 47.37609997391701,
+        "max_ms": 257.7618001960218,
+        "exceptions": 0,
+        "server_errors": 0,
+        "non_2xx": 0,
+        "rounds": {
+          "1": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 142.81990006566048,
+            "p95_ms": 208.76740012317896,
+            "p99_ms": 218.62920001149178,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "2": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 136.19779981672764,
+            "p95_ms": 213.44730025157332,
+            "p99_ms": 218.53889990597963,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "3": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 180.43969990685582,
+            "p95_ms": 235.15130020678043,
+            "p99_ms": 254.32199984788895,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          }
+        },
+        "passed": true,
+        "failures": []
+      },
+      "matching": {
+        "count": 300,
+        "status_counts": {
+          "200": 300
+        },
+        "p50_ms": 506.0299998149276,
+        "p95_ms": 670.7639000378549,
+        "p99_ms": 763.6743998154998,
+        "min_ms": 135.4900998994708,
+        "max_ms": 955.2213000133634,
+        "exceptions": 0,
+        "server_errors": 0,
+        "non_2xx": 0,
+        "rounds": {
+          "1": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 481.80439975112677,
+            "p95_ms": 633.1404997035861,
+            "p99_ms": 693.2648997753859,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "2": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 489.4603001885116,
+            "p95_ms": 653.7072001956403,
+            "p99_ms": 725.2966999076307,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          },
+          "3": {
+            "count": 100,
+            "status_counts": {
+              "200": 100
+            },
+            "p50_ms": 554.9253998324275,
+            "p95_ms": 703.7911997176707,
+            "p99_ms": 817.8144004195929,
+            "exceptions": 0,
+            "server_errors": 0,
+            "non_2xx": 0,
+            "passed": true,
+            "failures": []
+          }
+        },
+        "passed": true,
+        "failures": []
+      }
+    },
+    "reasons": []
+  },
+  "conclusion": "PASS: live MySQL dataset measured, per-endpoint P95 within threshold, 0 5xx, 0 uncaught exceptions",
+  "server_process": {
+    "managed": true,
+    "port": 18080,
+    "pid": 2492,
+    "released": true,
+    "log": "D:\\软工大作业\\claim-subsystem\\evidence\\performance-server-v1.0.1.log"
+  },
+  "server_exception_reading": {
+    "available": true,
+    "method": "uvicorn combined stdout/stderr log; offset taken after startup; counts Traceback / Exception in ASGI application / 500",
+    "path": "D:\\软工大作业\\claim-subsystem\\evidence\\performance-server-v1.0.1.log",
+    "bytes_read": 85902,
+    "empty_log": false,
+    "tracebacks": 0,
+    "asgi_exceptions": 0,
+    "http_500_lines": 0,
+    "samples": [],
+    "passed": true
+  },
+  "cleanup": {
+    "performed": true,
+    "ok": true,
+    "prefix": "T-PERF-b16397dd-"
+  }
+}

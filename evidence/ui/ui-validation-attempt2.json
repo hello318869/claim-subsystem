@@ -1,0 +1,536 @@
+{
+  "started_at": "2026-11-05T11:58:37.878Z",
+  "database": "claim_dev",
+  "mysql_port": 33307,
+  "app_port": 18082,
+  "fixture_prefix": "UI-QA-20261105-2042-",
+  "real_http": true,
+  "checks": [
+    {
+      "name": "four-isolated-browser-contexts",
+      "passed": true,
+      "detail": "alice / bob / finder / outsider each have separate browser storage and in-memory tokens"
+    },
+    {
+      "name": "desktop-no-horizontal-overflow",
+      "passed": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440
+      }
+    },
+    {
+      "name": "my-lost-record-matching-with-reasons",
+      "passed": true,
+      "detail": {
+        "candidate_count": 1,
+        "rule_version": "rules-v1.1"
+      }
+    },
+    {
+      "name": "two-pending-applications-created-via-ui",
+      "passed": true,
+      "detail": {
+        "alice_claim_id": "c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+        "bob_claim_id": "64483ca9-9c68-4d81-864d-32c49274a1f1"
+      }
+    },
+    {
+      "name": "anonymous-text-message-via-ui",
+      "passed": true,
+      "detail": {
+        "status": 201,
+        "dto_alias_present": true,
+        "ui_anonymous_label": "我/对方",
+        "raw_sender_id_returned": false
+      }
+    },
+    {
+      "name": "xss-payload-rendered-as-text",
+      "passed": true,
+      "detail": {
+        "image_elements_created": 0,
+        "onerror_executed": false
+      }
+    },
+    {
+      "name": "pii-blocked-in-ui-and-server-not-persisted",
+      "passed": true,
+      "detail": {
+        "ui_error_visible": true,
+        "api_status": 422,
+        "database_phone_present": false
+      }
+    },
+    {
+      "name": "outsider-api-denied",
+      "passed": true,
+      "detail": {
+        "claim_status": 403,
+        "messages_status": 403
+      }
+    },
+    {
+      "name": "approval-closes-other-pending-claim",
+      "passed": true,
+      "detail": {
+        "bob_state": "CLOSED_OTHER"
+      }
+    },
+    {
+      "name": "two-party-handover-real-ui",
+      "passed": true,
+      "detail": {
+        "single_party_state": "APPROVED",
+        "both_parties_state": "COMPLETED",
+        "live_codes_written_to_evidence": false
+      }
+    },
+    {
+      "name": "disputed-freeze-history-and-export",
+      "passed": true,
+      "detail": {
+        "input_disabled": true,
+        "write_http_status": 409,
+        "code_http_status": 409,
+        "history_readable": true,
+        "identity_mapping_keys_absent": true,
+        "download": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\dispute-export-ui-fixture.json"
+      }
+    },
+    {
+      "name": "expired-code-error-ui-and-explicit-reset",
+      "passed": true,
+      "detail": {
+        "expiry_status": 410,
+        "reset_status": 200,
+        "reset_count": 1,
+        "seam": "Only own prefixed HandoverCode.expires_at set into past; no natural 30-minute wait"
+      }
+    },
+    {
+      "name": "identity-switch-clears-private-dom-and-no-token-storage",
+      "passed": true,
+      "detail": {
+        "private_workspace_hidden": true,
+        "private_evidence_absent": true,
+        "local_storage_entries": 0,
+        "session_storage_entries": 0
+      }
+    },
+    {
+      "name": "390px-mobile-no-horizontal-overflow",
+      "passed": true,
+      "detail": {
+        "width": 390,
+        "scroll": 390
+      }
+    },
+    {
+      "name": "expired-signed-token-real-401-ui",
+      "passed": true,
+      "detail": {
+        "status": 401,
+        "seam": "Auth response token replaced with correctly signed already-expired fixture; subsequent protected requests reached the real backend"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "filename": "01-desktop-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\01-desktop-overview.png",
+      "selector": "viewport",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "02-explainable-matching.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\02-explainable-matching.png",
+      "selector": "#lost-section",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "03-private-evidence-and-alias-chat.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\03-private-evidence-and-alias-chat.png",
+      "selector": "#claim-workspace",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "04-two-party-handover-completed.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\04-two-party-handover-completed.png",
+      "selector": "#claim-workspace",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "05-dispute-read-only-export.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\05-dispute-read-only-export.png",
+      "selector": "#claim-workspace",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "06-expired-code-error.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\06-expired-code-error.png",
+      "selector": "#handover-section",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "07-mobile-390px.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\07-mobile-390px.png",
+      "selector": "viewport",
+      "actor": "alice-mobile",
+      "live_code_visible": false
+    },
+    {
+      "filename": "08-mobile-found-list.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\08-mobile-found-list.png",
+      "selector": "#found-section",
+      "actor": "alice-mobile",
+      "live_code_visible": false
+    },
+    {
+      "filename": "09-expired-token-error.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\09-expired-token-error.png",
+      "selector": "viewport",
+      "actor": "expired-token-fixture",
+      "live_code_visible": false
+    }
+  ],
+  "api_events": [
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "outsider",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/matches",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+      "status": 200,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/messages",
+      "status": 201,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/messages",
+      "status": 201,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/messages",
+      "status": 422,
+      "error_code": "contact_info_blocked"
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+      "status": 403,
+      "error_code": "forbidden"
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/messages",
+      "status": 403,
+      "error_code": "forbidden"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+      "status": 200,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/approve",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims/64483ca9-9c68-4d81-864d-32c49274a1f1",
+      "status": 200,
+      "claim_status": "CLOSED_OTHER"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/code",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/code",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/handover/confirm",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4/handover/confirm",
+      "status": 200,
+      "claim_status": "COMPLETED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/c31c6f7e-2aba-4eca-929f-b26ea961d9e4",
+      "status": 200,
+      "claim_status": "COMPLETED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/messages",
+      "status": 201,
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048",
+      "status": 200,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/approve",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/dispute",
+      "status": 200,
+      "claim_status": "DISPUTED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/messages",
+      "status": 409,
+      "error_code": "invalid_transition"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/code",
+      "status": 409,
+      "error_code": "invalid_transition"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/820c9cdf-66e9-486e-8f1e-981c4e47a048/dispute-export",
+      "status": 200
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/8239acb3-7c37-4336-88a1-6436f06b6a56",
+      "status": 200,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/claims/8239acb3-7c37-4336-88a1-6436f06b6a56/approve",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/8239acb3-7c37-4336-88a1-6436f06b6a56",
+      "status": 200,
+      "claim_status": "APPROVED",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims/8239acb3-7c37-4336-88a1-6436f06b6a56/code",
+      "status": 410,
+      "error_code": "code_expired",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/8239acb3-7c37-4336-88a1-6436f06b6a56/handover/reset",
+      "status": 200,
+      "via": "browser UI"
+    }
+  ],
+  "console_errors": [
+    {
+      "actor": "alice",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "actor": "alice",
+      "text": "Failed to load resource: the server responded with a status of 410 (Gone)"
+    }
+  ],
+  "page_errors": [],
+  "limitations": [
+    "MessageDTO returns sender_alias, but current UI renders only 我/对方 labels, not the server alias. Initial assertion expecting the full alias stopped attempt 1; no application code was changed to pass.",
+    "Browser smoke uses synthetic UI-QA data and local MySQL; no real student data, external authentication, external publishing service, public network or natural time wait acceptance.",
+    "Expected 403/409/410/422 HTTP errors may appear as browser resource console messages; JavaScript page errors are reported separately."
+  ],
+  "cleanup": {
+    "database": "claim_dev",
+    "prefix": "UI-QA-20261105-2042-",
+    "deleted_only_own_fixture": {
+      "messages": 3,
+      "handover_codes": 3,
+      "idempotency_records": 11,
+      "audit_events": 10,
+      "item_approvals": 3,
+      "claims": 4,
+      "prefixed_idempotency_keys": 0,
+      "remaining_prefixed_audit": 0,
+      "listing_snapshots": 7
+    }
+  },
+  "success": false,
+  "server_pid": 8108,
+  "browser_version": "156.0.4314.58",
+  "playwright_version": "1.62.1",
+  "expected_resource_console_errors": [
+    {
+      "actor": "alice",
+      "text": "Failed to load resource: the server responded with a status of 410 (Gone)"
+    }
+  ],
+  "unexpected_console_errors": [
+    {
+      "actor": "alice",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "failure": {
+    "name": "AssertionError",
+    "message": "Unexpected browser console errors present\n\n1 !== 0\n",
+    "stack": "AssertionError [ERR_ASSERTION]: Unexpected browser console errors present\n\n1 !== 0\n\n    at D:\\软工大作业\\claim-subsystem\\scripts\\ui_smoke.cjs:321:12"
+  },
+  "server_stopped": true,
+  "ended_at": "2026-11-05T11:58:56.602Z"
+}

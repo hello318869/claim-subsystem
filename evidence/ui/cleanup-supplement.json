@@ -1,0 +1,17 @@
+{
+  "database": "claim_dev",
+  "port": 33307,
+  "scope": "Supplemental cleanup of own UI-QA cached message responses only",
+  "runs": [
+    {
+      "source_run": "ui-validation-attempt1.json",
+      "matched_own_cached_messages_removed": 1,
+      "match_scope": "actor alice + chat.send + exact run UTC window + exact sender alias of own claim + known synthetic test message"
+    },
+    {
+      "source_run": "ui-validation-attempt2.json",
+      "matched_own_cached_messages_removed": 3,
+      "match_scope": "actor alice + chat.send + exact run UTC window + exact sender alias of own claim + known synthetic test message"
+    }
+  ]
+}

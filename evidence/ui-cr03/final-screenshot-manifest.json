@@ -1,0 +1,49 @@
+{
+  "source_sha256": {
+    "web/index.html": "13af85bf2f4222a5228c055e14701c0a55206c4d94edfd1e2669f461d7a8e7f9",
+    "web/app.js": "3b4f0527ae393df8b28adac1dc74c426f321402a67bfca95928209637c2deebc",
+    "web/styles.css": "02021b19855f28c388cd3e4465e5fac5c8e86166caee239e2fb5db05dc5fd4d0"
+  },
+  "screenshots": [
+    {
+      "filename": "06-final-group-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\06-final-group-overview.png",
+      "scene": "latest-default-group",
+      "source_run": "ui-cr03-final-visual-capture.json",
+      "sha256": "d386dbe6090889a8c1ac262ab508f1ce5c458a99ad926d66a616176c2d91049e",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "04-count-unavailable-error.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\04-count-unavailable-error.png",
+      "scene": "latest-failed-count-unavailable",
+      "source_run": "ui-cr03-rg09-final-run.json",
+      "sha256": "2ffcd4814adaf5da138811edb79492114a2cabb16933e44335c77d72ac47a783",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "07-online-recovered-counts.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\07-online-recovered-counts.png",
+      "scene": "latest-online-recovery",
+      "source_run": "ui-cr03-rg09-final-run.json",
+      "sha256": "a62e6a1c36ce9df9a05d56de1768168ce52d3fe128c407e6af41c34085762bc9",
+      "width": 1440,
+      "height": 1050,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    },
+    {
+      "filename": "05-mobile-390-group.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\05-mobile-390-group.png",
+      "scene": "latest-390px-group",
+      "source_run": "ui-cr03-final-visual-capture.json",
+      "sha256": "14e4f28a20b5a4c1033b73fc6c9cf2df17021c31fc852089e6e36e96f2d1461b",
+      "width": 390,
+      "height": 844,
+      "security_review": "actual synthetic UI-QA data only; no token text or live handover code; private evidence panel not shown"
+    }
+  ]
+}

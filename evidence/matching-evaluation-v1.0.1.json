@@ -1,0 +1,102 @@
+{
+  "tool": "evaluate_matching",
+  "evidence_version": "v1.0.1",
+  "status": "passed",
+  "generated_at": "2026-11-05T19:52:51+08:00",
+  "fixture": "D:\\软工大作业\\claim-subsystem\\tests\\fixtures\\matching-v1.json",
+  "fixture_sha256_before": "443e7e59ed2e887314dc9528d1d2eed5dc7d1565bc92afa56939936047bcef99",
+  "fixture_sha256_after": "443e7e59ed2e887314dc9528d1d2eed5dc7d1565bc92afa56939936047bcef99",
+  "dataset_version": "matching-v1",
+  "adapter": {
+    "mode": "http",
+    "base_url": "http://127.0.0.1:18080",
+    "actor": "alice"
+  },
+  "top_k": 3,
+  "counts": {
+    "positive": 40,
+    "negative": 12,
+    "found_records": 40,
+    "distractors": 15
+  },
+  "split_counts": {
+    "development": {
+      "positive": 24,
+      "negative": 7
+    },
+    "regression": {
+      "positive": 16,
+      "negative": 5
+    }
+  },
+  "metrics": {
+    "positive_count": 40,
+    "positive_hits": 39,
+    "positive_topk_recall": 0.975,
+    "negative_count": 12,
+    "negative_recommended": 0,
+    "negative_recommended_rate": 0.0,
+    "negative_with_score_gt_0": 0,
+    "negative_positive_score_rate": 0.0
+  },
+  "split_metrics": {
+    "development": {
+      "positive_count": 24,
+      "positive_hits": 24,
+      "positive_topk_recall": 1.0,
+      "negative_count": 7,
+      "negative_recommended": 0,
+      "negative_recommended_rate": 0.0,
+      "negative_with_score_gt_0": 0,
+      "negative_positive_score_rate": 0.0
+    },
+    "regression": {
+      "positive_count": 16,
+      "positive_hits": 15,
+      "positive_topk_recall": 0.9375,
+      "negative_count": 5,
+      "negative_recommended": 0,
+      "negative_recommended_rate": 0.0,
+      "negative_with_score_gt_0": 0,
+      "negative_positive_score_rate": 0.0
+    }
+  },
+  "thresholds": {
+    "positive_top3_recall_min": 0.8,
+    "negative_recommended_rate_max": 0.2
+  },
+  "gate": {
+    "passed": true,
+    "reasons": []
+  },
+  "rule_versions": [
+    "rules-v1.1"
+  ],
+  "failures": {
+    "positive_misses": [
+      {
+        "case_id": "P32",
+        "split": "regression",
+        "expected_ids": [
+          "T-M-F32"
+        ],
+        "returned_ids": [],
+        "scores": [],
+        "error": null
+      }
+    ],
+    "negative_recommended": [],
+    "execution_errors": []
+  },
+  "privacy": "synthetic dataset; no real personal data",
+  "evaluation_scope": {
+    "development": "used for rule/gate selection",
+    "regression": "已见合成回归集 (seen synthetic regression set)",
+    "generalization_claim": "not an unseen/generalization accuracy; both splits are synthetic and the regression split has been reviewed"
+  },
+  "notes": [
+    "Labels are frozen; the script only reads the fixture.",
+    "Negative recommendation is counted as any non-empty Top3; the score>0 rate is reported separately.",
+    "已见合成回归集：不得将本报告数值表述为未见数据的泛化准确率。"
+  ]
+}

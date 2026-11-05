@@ -1,0 +1,156 @@
+{
+  "started_at": "2026-11-05T11:56:46.760Z",
+  "database": "claim_dev",
+  "mysql_port": 33307,
+  "app_port": 18082,
+  "fixture_prefix": "UI-QA-20261105-2042-",
+  "real_http": true,
+  "checks": [
+    {
+      "name": "four-isolated-browser-contexts",
+      "passed": true,
+      "detail": "alice / bob / finder / outsider each have separate browser storage and in-memory tokens"
+    },
+    {
+      "name": "desktop-no-horizontal-overflow",
+      "passed": true,
+      "detail": {
+        "width": 1440,
+        "scroll": 1440
+      }
+    },
+    {
+      "name": "my-lost-record-matching-with-reasons",
+      "passed": true,
+      "detail": {
+        "candidate_count": 1,
+        "rule_version": "rules-v1.1"
+      }
+    },
+    {
+      "name": "two-pending-applications-created-via-ui",
+      "passed": true,
+      "detail": {
+        "alice_claim_id": "1864a494-f321-4db0-b17d-045af18e40a1",
+        "bob_claim_id": "ae1b0c94-7865-4b88-a4dd-5e0e3caa8665"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "filename": "01-desktop-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\01-desktop-overview.png",
+      "selector": "viewport",
+      "actor": "alice",
+      "live_code_visible": false
+    },
+    {
+      "filename": "02-explainable-matching.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui\\02-explainable-matching.png",
+      "selector": "#lost-section",
+      "actor": "alice",
+      "live_code_visible": false
+    }
+  ],
+  "api_events": [
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "outsider",
+      "method": "POST",
+      "path": "/demo/token",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/matches",
+      "status": 200,
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "finder",
+      "method": "GET",
+      "path": "/claims/1864a494-f321-4db0-b17d-045af18e40a1",
+      "status": 200,
+      "claim_status": "PENDING",
+      "via": "browser UI"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims/1864a494-f321-4db0-b17d-045af18e40a1/messages",
+      "status": 201,
+      "via": "browser UI"
+    }
+  ],
+  "console_errors": [
+    {
+      "actor": "alice",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "page_errors": [],
+  "limitations": [],
+  "cleanup": {
+    "database": "claim_dev",
+    "prefix": "UI-QA-20261105-2042-",
+    "deleted_only_own_fixture": {
+      "messages": 1,
+      "handover_codes": 0,
+      "idempotency_records": 2,
+      "audit_events": 2,
+      "item_approvals": 0,
+      "claims": 2,
+      "remaining_prefixed_audit": 0,
+      "listing_snapshots": 7
+    }
+  },
+  "success": false,
+  "server_pid": 39928,
+  "browser_version": "156.0.4314.58",
+  "playwright_version": "1.62.1",
+  "failure": {
+    "name": "AssertionError",
+    "message": "The expression evaluated to a falsy value:\n\n  assert.ok((await finder.locator('#message-list').innerText()).includes('申请人-'))\n",
+    "stack": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok((await finder.locator('#message-list').innerText()).includes('申请人-'))\n\n    at D:\\软工大作业\\claim-subsystem\\scripts\\ui_smoke.cjs:174:12"
+  },
+  "server_stopped": true,
+  "ended_at": "2026-11-05T11:56:54.156Z"
+}

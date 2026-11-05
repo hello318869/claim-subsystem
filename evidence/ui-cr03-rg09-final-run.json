@@ -1,0 +1,707 @@
+{
+  "started_at": "2026-11-05T12:19:56.110Z",
+  "fixture_prefix": "UI-QA-CR03-1793881196109-",
+  "database": "claim_dev",
+  "mysql_port": 33307,
+  "app_port": 18082,
+  "real_http": true,
+  "only_case": "RG-09",
+  "tests": [
+    {
+      "id": "RG-09",
+      "name": "计数失败占位与恢复",
+      "passed": true,
+      "detail": {
+        "after_failed_switch": {
+          "applicant": {
+            "text": "—",
+            "state": "unavailable"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "after_failed_refresh": {
+          "applicant": {
+            "text": "—",
+            "state": "unavailable"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "failure_list_text": "我收到的申请加载失败\n\n无法连接后端服务。请检查服务是否已启动，以及页面与 API 是否同源。（错误码：NETWORK_ERROR）\n\n重试",
+        "after_restore_without_click": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "2",
+            "state": "ready"
+          }
+        },
+        "automatic_recovery": true,
+        "recovery_elapsed_ms": 35,
+        "online_events_dispatched": 5,
+        "recovery_requests": [
+          {
+            "role": "applicant",
+            "page": "1",
+            "page_size": "1",
+            "status": 200
+          },
+          {
+            "role": "finder",
+            "page": "1",
+            "page_size": "1",
+            "status": 200
+          },
+          {
+            "role": "finder",
+            "page": "1",
+            "page_size": "20",
+            "status": 200
+          }
+        ],
+        "valid_list_total_fallback": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "—",
+            "state": "unavailable"
+          }
+        },
+        "fallback_after_online": {
+          "applicant": {
+            "text": "23",
+            "state": "ready"
+          },
+          "finder": {
+            "text": "2",
+            "state": "ready"
+          }
+        }
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "filename": "04-count-unavailable-error.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\04-count-unavailable-error.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    },
+    {
+      "filename": "07-online-recovered-counts.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\07-online-recovered-counts.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    },
+    {
+      "filename": "08-valid-list-total-fallback.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\08-valid-list-total-fallback.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    },
+    {
+      "filename": "06-final-group-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\06-final-group-overview.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    }
+  ],
+  "api_events": [
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "646cd804-6e96-4f42-9d93-8792d22d811c"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "e6b30355-388e-4076-9df8-e20b352df241"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "45ffd738-1de5-48cf-89fe-acf2f85a91b2"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "8df16b7f-bcb1-4ee5-bdd0-999ed92b5245"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "db4468b3-596c-4b98-926d-a5bcb8b82f8d"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "fdf1ccc1-f8a8-40f3-9233-62cd41c5981d"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "b15a47cc-47ac-4fc0-870d-02934c797b6d"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "cf9d8c53-f3fb-47a8-abae-95eff75ee7a5"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "5f699a48-67fb-4fd4-b4a6-1327ab3a439a"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "db8a79f3-770b-4ab3-84f5-080ce827d7fd"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "0207b465-df95-491f-a5f3-98bcb8e425ae"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "33012657-7515-4e26-8540-d624c4c5723d"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "f45fb54b-27eb-4cf3-9f41-59a1fd189964"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "090165b0-b4d4-4e4e-b91f-31532d94cb8a"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "487521b0-8f19-416c-941d-528c0f4e3fda"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "fd763d89-6b9d-47af-9a19-0b3af3ac5e21"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "916a5080-6988-4ab0-bec6-484151838973"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "26dc4e73-975f-4e36-8e79-403e56e250ce"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d7f26ffc-c5d2-423b-b7e6-45333759b9ae"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "bc247e83-b707-4626-b26b-7212202dff64"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "ce40e51b-eb1b-4de5-a875-7525f3673ee4"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "03c2aabc-20f7-4202-ae7b-2e9b4759a6fd"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "b2185925-c0bc-4839-86f5-a72a3f686eed"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "151ae782-6d45-435e-b54c-79a96eaad5ca"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d2c1ba52-7b18-4f9c-8fa1-c47ff18a6f67"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "dcaca1fe-74ca-44a0-882c-3cbd12a3ac1d"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 23
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 2
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 25
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 3
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 3
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    }
+  ],
+  "console_events": [
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "valid-total-fallback",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "valid-total-fallback",
+      "text": "Failed to load resource: net::ERR_INTERNET_DISCONNECTED"
+    }
+  ],
+  "page_errors": [],
+  "request_failures": [
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "desktop",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "valid-total-fallback",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    },
+    {
+      "phase": "RG-09",
+      "context": "valid-total-fallback",
+      "path": "/v1/claims",
+      "error": "net::ERR_INTERNET_DISCONNECTED"
+    }
+  ],
+  "favicon_requests": [],
+  "limitations": [
+    "Only grouping/read/pagination/privacy/failure handling was rechecked; the prior 15 core-write UI scenarios were not repeated.",
+    "RG-03 delays genuine HTTP responses without changing business payloads; RG-06 delays the genuine token response; RG-09 injects browser network failures and then an online event."
+  ],
+  "success": true,
+  "source_sha256": {
+    "web/index.html": "13af85bf2f4222a5228c055e14701c0a55206c4d94edfd1e2669f461d7a8e7f9",
+    "web/app.js": "3b4f0527ae393df8b28adac1dc74c426f321402a67bfca95928209637c2deebc",
+    "web/styles.css": "02021b19855f28c388cd3e4465e5fac5c8e86166caee239e2fb5db05dc5fd4d0"
+  },
+  "fixture_seed": {
+    "database": "claim_dev",
+    "port": 33307,
+    "created_listings": 26,
+    "prefix": "UI-QA-CR03-1793881196109-"
+  },
+  "server_pid": 13644,
+  "fixture_claims": [
+    {
+      "actor": "alice",
+      "claim_id": "646cd804-6e96-4f42-9d93-8792d22d811c",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-01"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "e6b30355-388e-4076-9df8-e20b352df241",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-02"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "45ffd738-1de5-48cf-89fe-acf2f85a91b2",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-03"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "8df16b7f-bcb1-4ee5-bdd0-999ed92b5245",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-04"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "db4468b3-596c-4b98-926d-a5bcb8b82f8d",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-05"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "fdf1ccc1-f8a8-40f3-9233-62cd41c5981d",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-06"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "b15a47cc-47ac-4fc0-870d-02934c797b6d",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-07"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "cf9d8c53-f3fb-47a8-abae-95eff75ee7a5",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-08"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "5f699a48-67fb-4fd4-b4a6-1327ab3a439a",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-09"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "db8a79f3-770b-4ab3-84f5-080ce827d7fd",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-10"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "0207b465-df95-491f-a5f3-98bcb8e425ae",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-11"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "33012657-7515-4e26-8540-d624c4c5723d",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-12"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "f45fb54b-27eb-4cf3-9f41-59a1fd189964",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-13"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "090165b0-b4d4-4e4e-b91f-31532d94cb8a",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-14"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "487521b0-8f19-416c-941d-528c0f4e3fda",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-15"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "fd763d89-6b9d-47af-9a19-0b3af3ac5e21",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-16"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "916a5080-6988-4ab0-bec6-484151838973",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-17"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "26dc4e73-975f-4e36-8e79-403e56e250ce",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-18"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "d7f26ffc-c5d2-423b-b7e6-45333759b9ae",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-19"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "bc247e83-b707-4626-b26b-7212202dff64",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-20"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "ce40e51b-eb1b-4de5-a875-7525f3673ee4",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-21"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "03c2aabc-20f7-4202-ae7b-2e9b4759a6fd",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-22"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "b2185925-c0bc-4839-86f5-a72a3f686eed",
+      "item_id": "UI-QA-CR03-1793881196109-F-PAGE-23"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "151ae782-6d45-435e-b54c-79a96eaad5ca",
+      "item_id": "UI-QA-CR03-1793881196109-F-OWN-01"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "d2c1ba52-7b18-4f9c-8fa1-c47ff18a6f67",
+      "item_id": "UI-QA-CR03-1793881196109-F-OWN-02"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "dcaca1fe-74ca-44a0-882c-3cbd12a3ac1d",
+      "item_id": "UI-QA-CR03-1793881196109-F-BOB-EXTRA"
+    }
+  ],
+  "fixture_note": "26 listing snapshots seeded; all 26 claims were created through real POST /v1/claims, not inserted or edited to fabricate counts.",
+  "browser_version": "156.0.4314.58",
+  "rg09_observations": {
+    "after_failed_switch": {
+      "applicant": {
+        "text": "—",
+        "state": "unavailable"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "after_failed_refresh": {
+      "applicant": {
+        "text": "—",
+        "state": "unavailable"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "failure_list_text": "我收到的申请加载失败\n\n无法连接后端服务。请检查服务是否已启动，以及页面与 API 是否同源。（错误码：NETWORK_ERROR）\n\n重试",
+    "after_restore_without_click": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "2",
+        "state": "ready"
+      }
+    },
+    "automatic_recovery": true,
+    "recovery_elapsed_ms": 35,
+    "online_events_dispatched": 5,
+    "recovery_requests": [
+      {
+        "role": "applicant",
+        "page": "1",
+        "page_size": "1",
+        "status": 200
+      },
+      {
+        "role": "finder",
+        "page": "1",
+        "page_size": "1",
+        "status": 200
+      },
+      {
+        "role": "finder",
+        "page": "1",
+        "page_size": "20",
+        "status": 200
+      }
+    ],
+    "valid_list_total_fallback": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "—",
+        "state": "unavailable"
+      }
+    },
+    "fallback_after_online": {
+      "applicant": {
+        "text": "23",
+        "state": "ready"
+      },
+      "finder": {
+        "text": "2",
+        "state": "ready"
+      }
+    }
+  },
+  "final_clean_page": {
+    "console_errors": 0,
+    "page_errors": 0,
+    "favicon_requests": 0
+  },
+  "unexpected_console_errors": [],
+  "source_unchanged": true,
+  "server_stopped": true,
+  "cleanup": {
+    "database": "claim_dev",
+    "prefix": "UI-QA-CR03-1793881196109-",
+    "deleted_only_own_fixture": {
+      "message_idempotency_records": 0,
+      "messages": 0,
+      "handover_codes": 0,
+      "idempotency_records": 26,
+      "audit_events": 26,
+      "item_approvals": 0,
+      "claims": 26,
+      "prefixed_idempotency_keys": 0,
+      "remaining_prefixed_audit": 0,
+      "listing_snapshots": 26
+    }
+  },
+  "ended_at": "2026-11-05T12:20:02.792Z"
+}

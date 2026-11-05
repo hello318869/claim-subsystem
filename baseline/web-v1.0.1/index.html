@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="校园失物认领子系统前端演示：只读浏览、可解释匹配、匿名沟通与交接确认。">
+  <meta name="claim-api-base" content="/v1">
+  <title>校园失物认领 · 演示协作台</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header">
+    <div class="page-shell header-inner">
+      <div class="brand-row">
+        <div>
+          <p class="eyebrow">校园失物认领 · 前端演示</p>
+          <h1>失物认领协作台</h1>
+          <p class="lede">选择演示身份后只读浏览失物，查看可解释的候选匹配，以匿名沟通完成认领与交接确认。</p>
+        </div>
+        <p class="demo-stamp">合成演示数据<br><span>非真实认证</span></p>
+      </div>
+
+      <section class="identity-panel" aria-labelledby="identity-title">
+        <div class="identity-copy">
+          <h2 id="identity-title">演示身份</h2>
+          <p class="hint">切换身份会清除上一身份的私有内容。演示令牌只保存在当前页面内存中，不写入本地存储，也不代表真实登录。</p>
+        </div>
+        <div id="identity-actions" class="identity-actions" role="group" aria-labelledby="identity-title">
+          <button class="actor-button" type="button" data-actor="alice" aria-pressed="false">
+            <span class="actor-name">alice</span>
+            <span class="actor-hint">申请人场景 A</span>
+          </button>
+          <button class="actor-button" type="button" data-actor="bob" aria-pressed="false">
+            <span class="actor-name">bob</span>
+            <span class="actor-hint">申请人场景 B</span>
+          </button>
+          <button class="actor-button" type="button" data-actor="finder" aria-pressed="false">
+            <span class="actor-name">finder</span>
+            <span class="actor-hint">拾获者场景</span>
+          </button>
+          <button class="actor-button" type="button" data-actor="outsider" aria-pressed="false">
+            <span class="actor-name">outsider</span>
+            <span class="actor-hint">无关用户场景</span>
+          </button>
+        </div>
+        <div class="identity-footer">
+          <p id="session-status" class="session-status" role="status">当前未选择演示身份。请选择演示身份以加载只读失物数据；此处的身份切换是合成演示，不是真实认证。</p>
+          <button id="logout-button" class="button button-subtle" type="button" disabled>退出演示身份</button>
+        </div>
+      </section>
+    </div>
+  </header>
+
+  <main id="main" class="page-shell main-stack">
+    <div id="notice-region" class="notice-region" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="cooldown-banner" class="cooldown-banner" role="status" hidden>
+      <div>
+        <strong>请求冷却中</strong>
+        <span id="cooldown-text">请稍后再试。</span>
+      </div>
+      <button id="cooldown-clear" class="button button-small button-subtle" type="button">清除本地倒计时</button>
+    </div>
+
+    <aside class="guardrail" aria-label="演示使用须知">
+      <p><strong>演示边界：</strong>所有人员、申请与物品数据均为合成。确认码只表示线下交接核对，不是身份凭证。匿名聊天中请勿发送手机号、邮箱或身份证号；物品编号等私有凭证请放入“私有证据”。</p>
+      <p class="guardrail-meta">公开列表不展示用户 ID、发布者身份或身份映射。界面只覆盖认领协作，不含注册、发布或后台管理入口。</p>
+    </aside>
+
+    <section id="found-section" class="panel" aria-labelledby="found-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">只读浏览 · 公开 DTO</p>
+          <h2 id="found-title">失物招领</h2>
+          <p class="hint">选择演示身份后加载已登记的拾获物品。选择一条记录可查看公开详情，并视认领状态发起私有认领申请。</p>
+        </div>
+        <button id="refresh-found" class="button button-subtle" type="button">刷新列表</button>
+      </div>
+
+      <div class="split-layout">
+        <div class="list-column">
+          <div class="list-toolbar">
+            <span class="small-label">公开拾获记录</span>
+            <span class="small-label">每页 20 条</span>
+          </div>
+          <div id="found-list" class="item-list" aria-live="polite" aria-busy="true">
+            <p class="state state-info">选择演示身份后加载公开失物。</p>
+          </div>
+          <nav class="pagination" aria-label="失物列表分页">
+            <button id="found-prev" class="button button-small" type="button" disabled>上一页</button>
+            <span id="found-page-status" class="page-status">第 1 页</span>
+            <button id="found-next" class="button button-small" type="button">下一页</button>
+          </nav>
+        </div>
+
+        <div class="detail-column">
+          <div id="found-detail" class="detail-box">
+            <p class="state state-info">选择演示身份并从左侧选择一条失物，查看公开详情。</p>
+          </div>
+
+          <p id="claim-gate" class="gate-note">选择演示身份后，可查看认领状态并发起认领申请。</p>
+
+          <form id="claim-form" class="claim-form" novalidate hidden>
+            <div class="form-heading">
+              <div>
+                <p class="eyebrow">私有流程</p>
+                <h3>发起认领申请</h3>
+              </div>
+              <span class="privacy-chip">仅双方可见</span>
+            </div>
+            <p class="hint">目标：<span id="claim-target">尚未选择</span></p>
+            <input id="claim-item-id" type="hidden" value="">
+
+            <div class="field">
+              <label for="claim-item-number">物品编号 / 私有暗号（可选）</label>
+              <input id="claim-item-number" name="item_number" type="text" maxlength="64" autocomplete="off" aria-describedby="claim-item-number-hint">
+              <p id="claim-item-number-hint" class="hint">用于证明物品归属的编号或暗号，会作为私有证据提交；服务端允许留空。请勿填写真实身份信息。</p>
+            </div>
+
+            <div class="field">
+              <label for="claim-evidence-input">私有证据说明</label>
+              <textarea id="claim-evidence-input" name="evidence_text" rows="5" maxlength="2000" aria-describedby="claim-evidence-hint"></textarea>
+              <p id="claim-evidence-hint" class="hint">仅本人和对方可见，不会出现在公开列表。不要填写手机号、邮箱或身份证号。</p>
+            </div>
+
+            <p id="claim-form-error" class="form-error" role="alert" hidden></p>
+            <div class="actions-row">
+              <button id="claim-submit" class="button button-primary" type="submit">提交认领申请</button>
+            </div>
+            <p class="fine-print">提交后由服务端校验身份、状态和隐私过滤。失败重试会沿用同一幂等键；修改内容后会使用新键。</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="lost-section" class="panel" aria-labelledby="lost-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">本人数据</p>
+          <h2 id="lost-title">我的丢失记录与匹配解释</h2>
+          <p class="hint">仅展示服务端判定为本人丢失的记录。选择一条记录后，可请求服务端返回拾获物品 Top 3 的解释结果。</p>
+        </div>
+        <button id="refresh-lost" class="button button-subtle" type="button">刷新我的记录</button>
+      </div>
+
+      <div class="split-layout">
+        <div>
+          <h3 class="minor-heading">我的丢失记录</h3>
+          <div id="lost-list" class="item-list" aria-live="polite">
+            <p class="state state-info">选择演示身份后查看本人丢失记录。</p>
+          </div>
+        </div>
+
+        <div>
+          <div class="matches-heading">
+            <h3 class="minor-heading">匹配解释</h3>
+            <button id="load-matches" class="button button-small" type="button" disabled>查看匹配解释（Top 3）</button>
+          </div>
+          <p id="match-context" class="hint">先选择一条本人丢失记录。</p>
+          <div id="matches-list" class="match-list" aria-live="polite">
+            <p class="state state-info">匹配结果会显示分数、理由和规则版本。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-note">
+        <strong>合成规则提示：</strong>匹配解释由服务端合成规则生成，只用于演示排序理由，不代表自动归属、安全判断或真实身份推断。分数量纲与阈值以接口契约及返回的规则版本为准。
+      </div>
+    </section>
+
+    <section id="claims-section" class="panel" aria-labelledby="claims-title">
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">本人相关</p>
+          <h2 id="claims-title">我的认领申请</h2>
+          <p class="hint">仅显示与当前演示身份相关的申请。列表不展示对方真实身份或身份映射。</p>
+        </div>
+        <button id="refresh-claims" class="button button-subtle" type="button">刷新申请</button>
+      </div>
+
+      <div id="claims-list" class="item-list" aria-live="polite">
+        <p class="state state-info">选择演示身份后查看本人相关申请。</p>
+      </div>
+      <nav class="pagination" aria-label="认领申请分页">
+        <button id="claims-prev" class="button button-small" type="button" disabled>上一页</button>
+        <span id="claims-page-status" class="page-status">第 1 页</span>
+        <button id="claims-next" class="button button-small" type="button">下一页</button>
+      </nav>
+    </section>
+
+    <section id="claim-workspace" class="panel workspace" aria-labelledby="claim-detail-title" hidden>
+      <div class="workspace-heading">
+        <div>
+          <p class="eyebrow">私有工作区 · 仅申请双方</p>
+          <h2 id="claim-detail-title" tabindex="-1">申请详情</h2>
+          <div id="claim-badges" class="badge-row" aria-live="polite"></div>
+        </div>
+        <div class="workspace-actions">
+          <button id="refresh-claim" class="button button-small button-subtle" type="button">刷新详情</button>
+          <button id="close-claim" class="button button-small button-subtle" type="button">收起并清除私有内容</button>
+        </div>
+      </div>
+
+      <div id="claim-load-state" class="claim-load-state" aria-live="polite"></div>
+
+      <div id="claim-detail-content" hidden>
+        <div id="claim-meta" class="claim-meta"></div>
+
+        <div class="claim-columns">
+          <section class="subpanel" aria-labelledby="evidence-title">
+            <div class="subpanel-heading">
+              <h3 id="evidence-title">私有证据</h3>
+              <span class="privacy-chip">仅双方可见</span>
+            </div>
+            <p class="hint">这些内容不会出现在公开列表。请勿继续扩散真实身份信息。</p>
+            <div id="claim-evidence" class="evidence-area"></div>
+          </section>
+
+          <section class="subpanel" aria-labelledby="actions-title">
+            <h3 id="actions-title">状态操作</h3>
+            <p id="claim-role-note" class="hint"></p>
+            <div id="claim-actions" class="actions-row"></div>
+            <p id="claim-actions-message" class="form-error" role="alert" hidden></p>
+          </section>
+        </div>
+
+        <section id="handover-section" class="subpanel handover-panel" aria-labelledby="handover-title" hidden>
+          <div class="subpanel-heading">
+            <h3 id="handover-title">交接确认</h3>
+            <span class="privacy-chip">双方确认</span>
+          </div>
+          <p>双方各自确认对方出示的确认码后，交接才会完成。确认码只用于交接核对，不是身份凭证；请勿发送手机号、邮箱、身份证号或聊天截图。</p>
+
+          <div class="handover-grid">
+            <div class="code-panel">
+              <h4>本方确认码</h4>
+              <button id="fetch-code-button" class="button" type="button">获取本方确认码</button>
+              <p id="code-status" class="hint" role="status"></p>
+              <div id="code-display" class="code-display" hidden>
+                <code id="own-code" class="code-value"></code>
+                <p id="code-expiry" class="hint"></p>
+              </div>
+            </div>
+
+            <form id="handover-confirm-form" class="handover-form" novalidate>
+              <h4>提交对方确认码</h4>
+              <div class="field">
+                <label for="counterpart-code">对方提供的确认码</label>
+                <input id="counterpart-code" type="text" maxlength="32" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" aria-describedby="counterpart-code-hint">
+                <p id="counterpart-code-hint" class="hint">输入对方线下出示的确认码。此处只需要确认码，不要附带身份资料。</p>
+              </div>
+              <p id="handover-form-error" class="form-error" role="alert" hidden></p>
+              <div class="actions-row">
+                <button id="handover-confirm-submit" class="button button-primary" type="submit">提交对方确认码</button>
+              </div>
+            </form>
+          </div>
+
+          <p id="handover-progress" class="handover-progress" role="status"></p>
+          <p id="handover-action-error" class="form-error" role="alert" hidden></p>
+
+          <div class="handover-reset">
+            <button id="reset-handover-button" class="button button-small button-subtle" type="button">重置交接确认</button>
+            <p class="hint">仅在本方触发过错误冷却且冷却已结束，或交接码已到期时可重置；每申请最多 2 次。重置只影响交接确认，不会删除申请或聊天记录，旧的双方确认会立即清空。</p>
+          </div>
+        </section>
+
+        <section id="chat-section" class="subpanel chat-panel" aria-labelledby="chat-title" hidden>
+          <div class="subpanel-heading">
+            <h3 id="chat-title">匿名沟通</h3>
+            <button id="refresh-messages" class="button button-small button-subtle" type="button">刷新消息</button>
+          </div>
+          <p class="hint">双方以匿名身份沟通，不展示真实身份映射。消息仅本申请双方可读。</p>
+          <div id="message-list" class="message-list" role="log" aria-live="polite" aria-busy="false">
+            <p class="state state-info">正在加载消息…</p>
+          </div>
+
+          <form id="message-form" class="message-form" novalidate>
+            <div class="field">
+              <label for="message-text">消息内容</label>
+              <textarea id="message-text" rows="3" maxlength="2000" aria-describedby="message-hint message-count"></textarea>
+            </div>
+            <div class="form-foot">
+              <span id="message-count" class="character-count">0 / 2000</span>
+              <span id="chat-readonly-note" class="readonly-note"></span>
+            </div>
+            <p id="message-form-error" class="form-error" role="alert" hidden></p>
+            <div class="actions-row">
+              <button id="message-submit" class="button button-primary" type="submit">发送匿名消息</button>
+            </div>
+          </form>
+
+          <p id="message-hint" class="pii-note">手机号、邮箱和身份证号会被硬拦截。物品编号、交易暗号等请通过“私有证据”提交，不要在聊天中发送。</p>
+        </section>
+
+        <section id="dispute-section" class="subpanel dispute-panel" aria-labelledby="dispute-title" hidden>
+          <div class="subpanel-heading">
+            <h3 id="dispute-title">争议与去身份导出</h3>
+            <span class="privacy-chip">冻结</span>
+          </div>
+          <p id="dispute-description">发起争议会将本次申请冻结为只读：状态操作、匿名沟通与交接确认全部停止；历史消息仍可查看，去身份导出将开放。该操作在界面中不可撤销，请确认后再继续。</p>
+          <div class="actions-row">
+            <button id="dispute-button" class="button button-danger-outline" type="button">发起争议并冻结申请</button>
+            <button id="export-button" class="button" type="button" hidden>下载去身份导出</button>
+          </div>
+          <p id="dispute-note" class="hint"></p>
+        </section>
+      </div>
+    </section>
+
+    <section class="panel notes-panel" aria-labelledby="notes-title">
+      <h2 id="notes-title">演示说明</h2>
+      <div class="notes-grid">
+        <article>
+          <h3>身份与权限</h3>
+          <p>alice、bob、finder、outsider 仅为演示场景标签，不是真实账号。实际角色和权限由服务端根据令牌判定；越权请求会返回 403。</p>
+        </article>
+        <article>
+          <h3>认领与交接</h3>
+          <p>同一拾获物品最多只有一个申请获批。双方都提交对方确认码后才完成交接；确认码不代表真实身份，也不应在聊天中传递。</p>
+        </article>
+        <article>
+          <h3>隐私边界</h3>
+          <p>公开 DTO 不展示 user_id、发布者 ID 或真实身份映射。去身份导出去除身份映射，但仍应在授权范围内使用。</p>
+        </article>
+        <article>
+          <h3>接口状态</h3>
+          <p>页面按冻结的 api-contract.md（2026-11-05）对接，并经过最小真实接口核查；仍不等同于完整验收，实际行为以服务端与测试结果为准。</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="page-shell footer-inner">
+      <p>校园失物认领子系统 · 前端演示</p>
+      <p>合成数据，非真实认证。演示令牌仅保存在本页内存中；刷新页面后需重新选择演示身份。</p>
+    </div>
+  </footer>
+
+  <noscript>
+    <p class="no-script">此演示需要启用 JavaScript 才能加载和操作。</p>
+  </noscript>
+
+  <dialog id="action-dialog" class="action-dialog" aria-labelledby="action-dialog-title" aria-describedby="action-dialog-description">
+    <form id="action-dialog-form" novalidate>
+      <p class="eyebrow">请再次确认</p>
+      <h2 id="action-dialog-title">确认操作</h2>
+      <p id="action-dialog-description" class="dialog-description"></p>
+
+      <div id="action-dialog-reason-wrap" class="field" hidden>
+        <label for="action-dialog-reason" id="action-dialog-reason-label">原因</label>
+        <textarea id="action-dialog-reason" rows="3" maxlength="500" aria-describedby="action-dialog-reason-hint"></textarea>
+        <p id="action-dialog-reason-hint" class="hint">原因会对相关方可见，请勿填写真实身份信息。</p>
+      </div>
+
+      <label id="action-dialog-ack-wrap" class="check-row" hidden>
+        <input id="action-dialog-ack" type="checkbox">
+        <span id="action-dialog-ack-text">我理解此操作的后果。</span>
+      </label>
+
+      <p id="action-dialog-error" class="form-error" role="alert" hidden></p>
+
+      <div class="dialog-actions">
+        <button id="action-dialog-cancel" class="button" type="button">取消</button>
+        <button id="action-dialog-confirm" class="button button-primary" type="submit">确认</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

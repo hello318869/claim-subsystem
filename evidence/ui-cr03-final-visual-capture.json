@@ -1,0 +1,454 @@
+{
+  "started_at": "2026-11-05T12:22:55.521Z",
+  "fixture_prefix": "UI-QA-CR03-1793881375521-",
+  "database": "claim_dev",
+  "mysql_port": 33307,
+  "app_port": 18082,
+  "real_http": true,
+  "only_case": "SCREENSHOTS",
+  "tests": [],
+  "screenshots": [
+    {
+      "filename": "05-mobile-390-group.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\05-mobile-390-group.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    },
+    {
+      "filename": "06-final-group-overview.png",
+      "path": "D:\\软工大作业\\claim-subsystem\\evidence\\ui-cr03\\06-final-group-overview.png",
+      "scope": "actual claims group panel viewport; no handover codes fetched"
+    }
+  ],
+  "api_events": [
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d3575f93-3d75-49ba-99d2-6f768c513eee"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "bb800e6f-0740-446b-ab4f-802e48cf91dc"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "a75c534a-c287-4b7e-bbf2-ee42fdbc0c19"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "4065a703-5037-426c-bef8-38090ca0f20f"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "389fc0d6-ce95-485e-a7b9-c59e1e82d140"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "8ef5ebba-63a4-42aa-8cba-2953e7049a51"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "f8154b2c-ae2d-48cf-be89-2a5843af7f98"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "2323b094-b957-46ad-8b90-44ae4072c6b3"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "1da7f7b7-3d07-4f60-af57-84e5cd42e7ee"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "b616b056-76d4-4d91-86ee-65b0ba068500"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "ab20c10d-46a2-490e-b999-46a757a08886"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "bcfd26a1-d2ef-4072-931d-aaa74ba70c2b"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d383edbc-a6db-4bd1-9649-12c9385f5842"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "4713ddd8-e20c-4002-bcf1-94ea78a195dc"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "1dcb2e37-6546-4132-bb96-348124c76110"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "4d5e9929-1055-4777-87d7-d38075ce88a3"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "a281cdf8-6346-47df-8f19-03d54b848df6"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d065fc38-87f2-43a2-b6d5-7893f9d66e2c"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "ee558efb-0c91-42c7-8ce4-318a5ff20684"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "db2ee4b8-e0f7-4361-becd-f8715dc2309e"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "0b7ad07a-ff0d-4d18-9309-03dc541c1087"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "d2b93eed-d91d-4681-9483-2b11771ca2d6"
+    },
+    {
+      "actor": "alice",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "cba9c7e3-b00b-42cb-9bd6-47ccc5a53f2b"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "c652bfd6-8887-49f7-960b-df16f5ac127c"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "bf2c7418-542a-4486-aa61-4b7a1a585b12"
+    },
+    {
+      "actor": "bob",
+      "method": "POST",
+      "path": "/claims",
+      "status": 201,
+      "resource_id": "8691d418-7c6f-4195-984f-e8f9fcad58dc"
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 23
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 2
+    },
+    {
+      "actor": "alice",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 25
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 3
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "bob",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 3
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=applicant&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=finder&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    },
+    {
+      "actor": "outsider",
+      "method": "GET",
+      "path": "/claims?role=all&page=1&page_size=100",
+      "status": 200,
+      "total": 0
+    }
+  ],
+  "console_events": [],
+  "page_errors": [],
+  "request_failures": [],
+  "favicon_requests": [],
+  "limitations": [
+    "Only grouping/read/pagination/privacy/failure handling was rechecked; the prior 15 core-write UI scenarios were not repeated.",
+    "RG-03 delays genuine HTTP responses without changing business payloads; RG-06 delays the genuine token response; RG-09 injects browser network failures and then an online event."
+  ],
+  "success": true,
+  "source_sha256": {
+    "web/index.html": "13af85bf2f4222a5228c055e14701c0a55206c4d94edfd1e2669f461d7a8e7f9",
+    "web/app.js": "3b4f0527ae393df8b28adac1dc74c426f321402a67bfca95928209637c2deebc",
+    "web/styles.css": "02021b19855f28c388cd3e4465e5fac5c8e86166caee239e2fb5db05dc5fd4d0"
+  },
+  "fixture_seed": {
+    "database": "claim_dev",
+    "port": 33307,
+    "created_listings": 26,
+    "prefix": "UI-QA-CR03-1793881375521-"
+  },
+  "server_pid": 8868,
+  "fixture_claims": [
+    {
+      "actor": "alice",
+      "claim_id": "d3575f93-3d75-49ba-99d2-6f768c513eee",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-01"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "bb800e6f-0740-446b-ab4f-802e48cf91dc",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-02"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "a75c534a-c287-4b7e-bbf2-ee42fdbc0c19",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-03"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "4065a703-5037-426c-bef8-38090ca0f20f",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-04"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "389fc0d6-ce95-485e-a7b9-c59e1e82d140",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-05"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "8ef5ebba-63a4-42aa-8cba-2953e7049a51",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-06"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "f8154b2c-ae2d-48cf-be89-2a5843af7f98",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-07"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "2323b094-b957-46ad-8b90-44ae4072c6b3",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-08"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "1da7f7b7-3d07-4f60-af57-84e5cd42e7ee",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-09"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "b616b056-76d4-4d91-86ee-65b0ba068500",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-10"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "ab20c10d-46a2-490e-b999-46a757a08886",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-11"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "bcfd26a1-d2ef-4072-931d-aaa74ba70c2b",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-12"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "d383edbc-a6db-4bd1-9649-12c9385f5842",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-13"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "4713ddd8-e20c-4002-bcf1-94ea78a195dc",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-14"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "1dcb2e37-6546-4132-bb96-348124c76110",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-15"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "4d5e9929-1055-4777-87d7-d38075ce88a3",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-16"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "a281cdf8-6346-47df-8f19-03d54b848df6",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-17"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "d065fc38-87f2-43a2-b6d5-7893f9d66e2c",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-18"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "ee558efb-0c91-42c7-8ce4-318a5ff20684",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-19"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "db2ee4b8-e0f7-4361-becd-f8715dc2309e",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-20"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "0b7ad07a-ff0d-4d18-9309-03dc541c1087",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-21"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "d2b93eed-d91d-4681-9483-2b11771ca2d6",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-22"
+    },
+    {
+      "actor": "alice",
+      "claim_id": "cba9c7e3-b00b-42cb-9bd6-47ccc5a53f2b",
+      "item_id": "UI-QA-CR03-1793881375521-F-PAGE-23"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "c652bfd6-8887-49f7-960b-df16f5ac127c",
+      "item_id": "UI-QA-CR03-1793881375521-F-OWN-01"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "bf2c7418-542a-4486-aa61-4b7a1a585b12",
+      "item_id": "UI-QA-CR03-1793881375521-F-OWN-02"
+    },
+    {
+      "actor": "bob",
+      "claim_id": "8691d418-7c6f-4195-984f-e8f9fcad58dc",
+      "item_id": "UI-QA-CR03-1793881375521-F-BOB-EXTRA"
+    }
+  ],
+  "fixture_note": "26 listing snapshots seeded; all 26 claims were created through real POST /v1/claims, not inserted or edited to fabricate counts.",
+  "browser_version": "156.0.4314.58",
+  "mobile": {
+    "passed": true,
+    "viewport": 390,
+    "document": 390
+  },
+  "final_clean_page": {
+    "console_errors": 0,
+    "page_errors": 0,
+    "favicon_requests": 0
+  },
+  "unexpected_console_errors": [],
+  "source_unchanged": true,
+  "server_stopped": true,
+  "cleanup": {
+    "database": "claim_dev",
+    "prefix": "UI-QA-CR03-1793881375521-",
+    "deleted_only_own_fixture": {
+      "message_idempotency_records": 0,
+      "messages": 0,
+      "handover_codes": 0,
+      "idempotency_records": 26,
+      "audit_events": 26,
+      "item_approvals": 0,
+      "claims": 26,
+      "prefixed_idempotency_keys": 0,
+      "remaining_prefixed_audit": 0,
+      "listing_snapshots": 26
+    }
+  },
+  "ended_at": "2026-11-05T12:23:01.290Z"
+}
