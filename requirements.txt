@@ -1,0 +1,10 @@
+# Runtime (pinned to ranges verified on this machine, 2026-11-05)
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30,<1.0
+SQLAlchemy>=2.0.30,<2.1
+PyMySQL>=1.1,<2.0
+pydantic>=2.7,<3.0
+
+# Test tooling
+pytest>=8.0,<10.0
+httpx>=0.27,<1.0

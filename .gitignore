@@ -1,0 +1,26 @@
+# Local credentials — never committed
+.env
+.env.test
+.env.local
+*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+.mypy_cache/
+.ruff_cache/
+
+# Runtime artefacts
+*.log
+*.sqlite3
+*.db
+tmp/
+dist/
+build/
