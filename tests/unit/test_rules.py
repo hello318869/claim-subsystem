@@ -102,4 +102,4 @@ def test_ranking_is_sorted_and_capped():
 
 
 def test_rule_version_is_frozen_string():
-    assert RULE_VERSION == "rules-v1.0"
+    assert RULE_VERSION == "rules-v1.1"

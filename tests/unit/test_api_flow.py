@@ -253,7 +253,7 @@ def test_withdraw_reject_dispute_and_matching(client):
     matches = client.get("/v1/matches", params={"item_id": "T-L-9001"}, headers=_auth(alice))
     assert matches.status_code == 200
     body = matches.json()
-    assert body["rule_version"] == "rules-v1.0"
+    assert body["rule_version"] == "rules-v1.1"
     assert body["candidates"], "seeded lost item should match at least one found record"
     for candidate in body["candidates"]:
         assert candidate["score"] >= body["threshold"]

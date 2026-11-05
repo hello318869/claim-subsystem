@@ -43,7 +43,7 @@ flowchart TD
 ## 3. 三个易变点如何被隔离
 
 1. **身份/招领契约**：服务只依赖 `IdentityPort.resolve(token)` 与 `ListingSource.list_page/get`。真实对接时改 `TokenIdentity` 与快照同步适配器，service 不动；对外字段由 `serializers.public_listing` 单点裁剪。
-2. **评分与隐私过滤**：`rules.py` 全是纯函数，配套 `RULE_VERSION="rules-v1.0"`。替换权重、阈值或过滤规则只改此文件与版本号，并触发 QR-04 重跑。
+2. **评分与隐私过滤**：`rules.py` 全是纯函数，配套 `RULE_VERSION="rules-v1.1"`（v1.1 增加“文本证据 ≥ 9 个重合词元”门槛，修复负例推荐率 1.0）。替换权重、阈值或过滤规则只改此文件与版本号，并触发 QR-04 重跑。
 3. **交接码恢复/失效**：`handover.py` 用服务端密钥 + claim + role + nonce + 到期秒派生 8 位码；`handover_codes` 只存 nonce、密钥化摘要、到期、双方确认与冷却标记。**恢复方式是重新派生**，不是缓存明文。密钥轮换尚未实现（已知风险）。
 
 ## 4. 并发与事务

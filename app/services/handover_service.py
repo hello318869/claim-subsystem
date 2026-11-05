@@ -169,7 +169,7 @@ def confirm(session: Session, settings: Settings, actor: str, claim_id: str, sub
     return 422, error_body("invalid_code", f"交接码不正确，剩余尝试 {remaining} 次", "code")
 
 
-def reset(session: Session, settings: Settings, actor: str, claim_id: str, reason: str) -> dict:
+def reset(session: Session, settings: Settings, actor: str, claim_id: str, reason: str) -> tuple[int, dict]:
     now = utcnow()
     claim = _lock_pair(session, claim_id)
     role = membership(claim, actor)
@@ -182,10 +182,12 @@ def reset(session: Session, settings: Settings, actor: str, claim_id: str, reaso
 
     deadline = from_db(claim.handover_deadline)
     if deadline is not None and now >= deadline:
+        # Persist the terminal state: returning (instead of raising) keeps the transaction
+        # commit that the router performs, so EXPIRED is not rolled back.
         claim.status = Status.EXPIRED.value
         claim.updated_at = to_db(now)
         session.flush()
-        raise AppError(410, "code_expired", "交接期限已过，申请已失效")
+        return 410, error_body("code_expired", "交接期限已过，申请已失效")
 
     if row.reset_count >= settings.max_resets:
         raise AppError(409, "reset_not_allowed", f"最多重置 {settings.max_resets} 次")
@@ -222,7 +224,7 @@ def reset(session: Session, settings: Settings, actor: str, claim_id: str, reaso
         detail=f"reset={row.reset_count}",
         now=to_db(now),
     )
-    return {
+    return 200, {
         "claim_id": claim.id,
         "expires_at": serializers.iso(row.expires_at),
         "reset_count": row.reset_count,

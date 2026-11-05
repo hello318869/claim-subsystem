@@ -11,8 +11,8 @@ from sqlalchemy.orm import Session
 from app import idempotency
 from app.clock import to_db, utcnow
 from app.config import Settings
-from app.schemas import MessageRequest
 from app.routers.deps import current_actor, get_db, get_settings_dep
+from app.schemas import MessageRequest
 from app.services import chat_service
 
 router = APIRouter(tags=["chat"])
@@ -41,20 +41,19 @@ def send_message(
     key = request.headers.get("Idempotency-Key")
     body_payload = {"claim_id": claim_id, **payload.model_dump()}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="chat.send", client_key=key, payload=body_payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers={"Idempotent-Replay": "true"})
-        body = chat_service.send_message(session, settings, actor, claim_id, payload.text)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="chat.send",
             client_key=key,
             payload=body_payload,
-            status_code=201,
-            body=body,
             now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers={"Idempotent-Replay": "true"})
+        body = chat_service.send_message(session, settings, actor, claim_id, payload.text)
+        idempotency.complete(
+            session, actor=actor, operation="chat.send", client_key=key, status_code=201, body=body
         )
     return JSONResponse(body, status_code=201)

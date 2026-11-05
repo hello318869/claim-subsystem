@@ -42,8 +42,11 @@ def counterpart_role(claim: Claim, actor: str) -> str:
 def claim_dto(claim: Claim, actor: str, code: HandoverCode | None = None) -> dict:
     role = my_role(claim, actor)
     other = counterpart_role(claim, actor)
-    confirmed_me = bool(code and getattr(code, f"confirmed_{role}"))
-    confirmed_other = bool(code and getattr(code, f"confirmed_{other}"))
+    # Confirmations are live while APPROVED and kept as history after COMPLETED. Every other
+    # state clears them so a rejected/expired/disputed claim never implies a confirmation.
+    show_confirmations = claim.status in {"APPROVED", "COMPLETED"}
+    confirmed_me = bool(code and show_confirmations and getattr(code, f"confirmed_{role}"))
+    confirmed_other = bool(code and show_confirmations and getattr(code, f"confirmed_{other}"))
     return {
         "id": claim.id,
         "item_id": claim.item_id,

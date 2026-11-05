@@ -79,3 +79,9 @@ def install_error_handlers(app: FastAPI) -> None:
             exc.status_code, "http_error"
         )
         return JSONResponse(status_code=exc.status_code, content=error_body(code, str(exc.detail)))
+
+    @app.exception_handler(Exception)
+    async def _unexpected(_: Request, exc: Exception) -> JSONResponse:
+        # Last resort: keep the frozen error body instead of a plain-text 500 page. This is
+        # still counted as a defect (5xx); it only makes the failure diagnosable.
+        return JSONResponse(status_code=500, content=error_body("internal_error", "服务器内部错误"))

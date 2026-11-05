@@ -41,7 +41,7 @@ class Settings:
     cooldown_seconds: int = 60
     pending_ttl_days: int = 7
     match_threshold: int = 40
-    match_rule_version: str = "rules-v1.0"
+    match_rule_version: str = "rules-v1.1"
     match_candidate_limit: int = 3
     chat_rate_limit_per_minute: int = 20
 

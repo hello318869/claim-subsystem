@@ -18,7 +18,7 @@ from app.services.access import membership
 from app.state_machine import Status
 
 _buckets: dict[tuple[str, str], deque[float]] = defaultdict(deque)
-CHAT_OPEN_STATES = {Status.PENDING.value, Status.APPROVED.value, Status.DISPUTED.value}
+CHAT_OPEN_STATES = {Status.PENDING.value, Status.APPROVED.value}
 
 
 def _rate_limit(claim_id: str, actor: str, limit_per_minute: int) -> None:
@@ -63,7 +63,13 @@ def send_message(
 ) -> dict:
     from app.rules import scan_contact_info
 
-    claim, role = _member_claim(session, actor, claim_id)
+    # Lock the claim row so a concurrent dispute/completion cannot slip between the status
+    # check and the insert (TOCTOU). Chat takes no listing lock, so it cannot deadlock with
+    # the listing -> claim order used by state-changing paths.
+    claim = claim_repo.lock(session, claim_id)
+    if claim is None:
+        raise AppError(404, "not_found", "认领申请不存在")
+    role = membership(claim, actor)
     if claim.status not in CHAT_OPEN_STATES:
         raise AppError(409, "invalid_transition", "该申请当前不接受新消息")
     _rate_limit(claim.id, actor, settings.chat_rate_limit_per_minute)

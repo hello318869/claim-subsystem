@@ -13,9 +13,17 @@ def get(session: Session, item_id: str) -> ListingSnapshot | None:
 
 
 def lock(session: Session, item_id: str) -> ListingSnapshot | None:
-    """Lock the item row first. Every state-changing transaction starts here."""
+    """Lock the item row first. Every state-changing transaction starts here.
 
-    statement = select(ListingSnapshot).where(ListingSnapshot.item_id == item_id).with_for_update()
+    ``populate_existing`` refreshes any already-loaded instance after the lock wait.
+    """
+
+    statement = (
+        select(ListingSnapshot)
+        .where(ListingSnapshot.item_id == item_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
     return session.execute(statement).scalar_one_or_none()
 
 
@@ -78,8 +86,16 @@ def list_page(
     return list(rows), int(total)
 
 
-def approved_claim_id(session: Session, item_id: str) -> str | None:
-    approval = session.get(ItemApproval, item_id)
+def approved_claim_id(session: Session, item_id: str, *, for_update: bool = False) -> str | None:
+    if for_update:
+        approval = session.execute(
+            select(ItemApproval)
+            .where(ItemApproval.item_id == item_id)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        ).scalar_one_or_none()
+    else:
+        approval = session.get(ItemApproval, item_id)
     return approval.claim_id if approval else None
 
 

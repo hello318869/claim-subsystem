@@ -19,7 +19,17 @@ def get(session: Session, claim_id: str) -> Claim | None:
 
 
 def lock(session: Session, claim_id: str) -> Claim | None:
-    statement = select(Claim).where(Claim.id == claim_id).with_for_update()
+    """Locking read that always refreshes the identity-mapped instance.
+
+    ``populate_existing`` is required: ``_locked_claim`` loads an anchor row first, so without
+    it the wait would finish and still return the stale pre-lock ``status``.
+    """
+    statement = (
+        select(Claim)
+        .where(Claim.id == claim_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
     return session.execute(statement).scalar_one_or_none()
 
 
@@ -59,7 +69,7 @@ def page_for_user(
     return list(rows), int(total)
 
 
-def find_pending_by(session: Session, item_id: str, applicant_id: str) -> Claim | None:
+def find_pending_by(session: Session, item_id: str, applicant_id: str, *, for_update: bool = False) -> Claim | None:
     statement = (
         select(Claim)
         .where(
@@ -70,6 +80,10 @@ def find_pending_by(session: Session, item_id: str, applicant_id: str) -> Claim 
         .order_by(Claim.created_at)
         .limit(1)
     )
+    if for_update:
+        # Current read: a plain SELECT under REPEATABLE READ can miss a PENDING row committed
+        # by a concurrent creator, producing a duplicate application.
+        statement = statement.with_for_update().execution_options(populate_existing=True)
     return session.execute(statement).scalars().first()
 
 

@@ -1,16 +1,16 @@
 需求ID,版本,变更状态,设计模块,实现文件,测试用例,说明
-FR-01,1.0,基线,认领发起,app/services/claim_service.py; app/routers/claims.py,tests/unit/test_api_flow.py::test_full_claim_and_handover_flow,重复提交返回同一申请；已批准 409
+FR-01,1.0.1,Revised,认领发起,app/services/claim_service.py; app/routers/claims.py,tests/unit/test_api_flow.py::test_full_claim_and_handover_flow; tests/unit/test_defect_fixes.py::test_unpublished_snapshot_is_not_claimable,重复提交返回同一申请；仅 published 可认领；同键并发不再 5xx
 FR-02,1.0,基线,私有证据,app/serializers.py; app/services/claim_service.py,tests/unit/test_serializers.py::test_claim_dto_shape_and_roles,仅双方可读；DTO 无身份字段
-FR-03,1.0,Revised,核验与批准,app/services/claim_service.py; app/repos/claim_repo.py,tests/unit/test_api_flow.py::test_second_approval_is_rejected,记录级唯一批准；并发第二个 409
-FR-04,1.0,VP-Adopted,多申请与唯一指针,app/models.py; app/repos/listing_repo.py,tests/unit/test_api_flow.py::test_second_approval_is_rejected,item_approvals.item_id 主键兜底
+FR-03,1.0.1,Revised,核验与批准,app/services/claim_service.py; app/repos/claim_repo.py,tests/unit/test_api_flow.py::test_second_approval_is_rejected; tests/unit/test_defect_fixes.py::test_locked_read_refreshes_stale_identity,记录级唯一批准；锁后强制刷新实体
+FR-04,1.0,VP-Adopted,多申请与唯一指针,app/models.py; app/repos/listing_repo.py,tests/unit/test_defect_fixes.py::test_different_keys_concurrent_create_yields_one_pending,item_approvals.item_id 主键兜底；不同键同人并发只留一条 PENDING
 FR-05,1.0,基线,撤销,app/services/claim_service.py,tests/unit/test_api_flow.py::test_withdraw_reject_dispute_and_matching,仅 PENDING 可撤销；撤销后再次撤销 409
-FR-06,1.0,Revised,匿名沟通,app/services/chat_service.py; app/rules.py,tests/unit/test_api_flow.py::test_full_claim_and_handover_flow; tests/unit/test_rules.py,手机号/邮箱/证件号硬拦截且不落库
-FR-07,1.0,Revised,交接确认,app/services/handover_service.py; app/handover.py,tests/unit/test_api_flow.py::test_repeated_wrong_codes_trigger_cooldown_and_block_reset; tests/unit/test_handover.py,双向码；5 次冷却；最多 2 次重置；24 小时绝对期限
-FR-08,1.0,基线,规则匹配,app/services/match_service.py; app/rules.py,tests/unit/test_api_flow.py::test_withdraw_reject_dispute_and_matching; tests/unit/test_rules.py::test_category_and_text_match_scores_above_threshold,Top-3 候选与理由；不自动批准
-FR-09,1.0,Revised,争议标记与导出,app/services/claim_service.py,tests/unit/test_api_flow.py::test_withdraw_reject_dispute_and_matching,导出无 user_id/publisher_id；非双方 403
-QR-01,1.0,Revised,性能,未实现测量（性能协作者）,tests/performance（他人负责）,本机真实 MySQL；分端点 P95≤1s；5xx=0 且未捕获异常=0；未测量不宣称达标
-QR-02,1.0,VP-Adopted,匿名性,app/serializers.py; app/routers/listings.py,tests/unit/test_serializers.py::test_public_listing_has_no_publisher_id; test_message_dto_has_no_sender_id,DTO 单点构造，结构上不泄露
+FR-06,1.0.1,Revised,匿名沟通,app/services/chat_service.py; app/rules.py,tests/unit/test_defect_fixes.py::test_disputed_claim_rejects_new_messages; tests/unit/test_defect_fixes.py::test_whitespace_only_bodies_are_422,DISPUTED 只读；空白消息 422；键集游标同秒不丢
+FR-07,1.0.1,Revised,交接确认,app/services/handover_service.py; app/handover.py,tests/unit/test_defect_fixes.py::test_reset_after_deadline_persists_expired; tests/unit/test_api_flow.py::test_repeated_wrong_codes_trigger_cooldown_and_block_reset,期限后 EXPIRED 持久化；5 次冷却；最多 2 次重置
+FR-08,1.0.1,Revised,规则匹配,app/services/match_service.py; app/rules.py,tests/unit/test_policy_v1_1.py::test_development_split_meets_both_gates; tests/unit/test_rules.py,规则 v1.1 文本证据门槛；不自动批准
+FR-09,1.0.1,Revised,争议标记与导出,app/services/claim_service.py,tests/unit/test_defect_fixes.py::test_dispute_export_reports_message_totals,导出含 messages_total/messages_truncated；非双方 403
+QR-01,1.0,Revised,性能,未实现测量（性能协作者）,tests/performance（他人负责）,本机真实 MySQL；分端点 P95≤1s；5xx=0 且未捕获异常=0；V1.0.1 未复测
+QR-02,1.0,VP-Adopted,匿名性,app/serializers.py; app/routers/listings.py,tests/unit/test_serializers.py::test_public_listing_has_no_publisher_id; tests/unit/test_serializers.py::test_message_dto_has_no_sender_id,DTO 单点构造，结构上不泄露
 QR-03,1.0,Revised,联系方式过滤,app/rules.py,tests/unit/test_rules.py::test_item_numbers_are_not_treated_as_phone_numbers,已知误伤 11 位纯数字编号；改走 item_number
-QR-04,1.0,Revised,匹配评测,app/rules.py（规则入口）,评测集由另一协作者提供,≥30 正例+≥10 负例；召回≥80%；负例推荐≤20%；不作真实准确率声明
+QR-04,1.0.1,Revised,匹配评测,app/rules.py（规则入口）,tests/unit/test_policy_v1_1.py::test_development_split_meets_both_gates; test_regression_split_is_reported_honestly,rules-v1.1；development 24/24 与 0/7；regression（已见）15/16 与 0/5；待真实 HTTP 评测重跑
 QR-05,1.0,Revised,令牌校验,app/security.py; app/routers/deps.py,tests/unit/test_security.py,先验签再验 exp；篡改/过期 401
-QR-06,1.0,Revised,码与幂等,app/idempotency.py; app/repos/idempotency_repo.py,tests/unit/test_api_flow.py::test_full_claim_and_handover_flow,同键同哈希重放；内容变 409；码不落明文
+QR-06,1.0.1,Revised,码与幂等,app/idempotency.py; app/repos/idempotency_repo.py,tests/unit/test_defect_fixes.py::test_same_idempotency_key_concurrent_create_never_500; tests/unit/test_policy_v1_1.py::test_fingerprint_is_keyed_and_domain_separated,事务内预占；HMAC 指纹；码不入缓存

@@ -11,8 +11,8 @@ from sqlalchemy.orm import Session
 from app import idempotency
 from app.clock import to_db, utcnow
 from app.config import Settings
-from app.schemas import ClaimCreateRequest, HandoverConfirmRequest, ReasonRequest, ResetRequest
 from app.routers.deps import current_actor, get_db, get_settings_dep
+from app.schemas import ClaimCreateRequest, HandoverConfirmRequest, ReasonRequest, ResetRequest
 from app.services import claim_service, handover_service
 
 router = APIRouter(tags=["claims"])
@@ -29,22 +29,22 @@ def create_claim(
     settings: Annotated[Settings, Depends(get_settings_dep)],
 ) -> JSONResponse:
     key = request.headers.get("Idempotency-Key")
+    body_payload = payload.model_dump()
+    now = to_db(utcnow())
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="claim.create", client_key=key, payload=payload.model_dump()
+        replay = idempotency.claim(
+            session, settings, actor=actor, operation="claim.create", client_key=key, payload=body_payload, now=now
         )
         if replay:
             return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        status_code, body = claim_service.create(session, settings, actor, payload.model_dump())
-        idempotency.remember(
+        status_code, body = claim_service.create(session, settings, actor, body_payload)
+        idempotency.complete(
             session,
             actor=actor,
             operation="claim.create",
             client_key=key,
-            payload=payload.model_dump(),
             status_code=status_code,
             body=body,
-            now=to_db(utcnow()),
         )
     return JSONResponse(body, status_code=status_code)
 
@@ -58,9 +58,7 @@ def list_claims(
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
 ) -> dict:
-    return claim_service.list_claims(
-        session, settings, actor, role=role, page=page, page_size=page_size
-    )
+    return claim_service.list_claims(session, settings, actor, role=role, page=page, page_size=page_size)
 
 
 @router.get("/claims/{claim_id}")
@@ -79,25 +77,25 @@ def withdraw_claim(
     request: Request,
     actor: Annotated[str, Depends(current_actor)],
     session: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings_dep)],
 ) -> JSONResponse:
     key = request.headers.get("Idempotency-Key")
     payload = {"claim_id": claim_id}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="claim.withdraw", client_key=key, payload=payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        body = claim_service.withdraw(session, actor, claim_id)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="claim.withdraw",
             client_key=key,
             payload=payload,
-            status_code=200,
-            body=body,
             now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        body = claim_service.withdraw(session, actor, claim_id)
+        idempotency.complete(
+            session, actor=actor, operation="claim.withdraw", client_key=key, status_code=200, body=body
         )
     return JSONResponse(body, status_code=200)
 
@@ -113,21 +111,20 @@ def approve_claim(
     key = request.headers.get("Idempotency-Key")
     payload = {"claim_id": claim_id}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="claim.approve", client_key=key, payload=payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        body = claim_service.approve(session, settings, actor, claim_id)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="claim.approve",
             client_key=key,
             payload=payload,
-            status_code=200,
-            body=body,
             now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        body = claim_service.approve(session, settings, actor, claim_id)
+        idempotency.complete(
+            session, actor=actor, operation="claim.approve", client_key=key, status_code=200, body=body
         )
     return JSONResponse(body, status_code=200)
 
@@ -139,25 +136,25 @@ def reject_claim(
     request: Request,
     actor: Annotated[str, Depends(current_actor)],
     session: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings_dep)],
 ) -> JSONResponse:
     key = request.headers.get("Idempotency-Key")
     body_payload = {"claim_id": claim_id, **payload.model_dump()}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="claim.reject", client_key=key, payload=body_payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        body = claim_service.reject(session, actor, claim_id, payload.reason)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="claim.reject",
             client_key=key,
             payload=body_payload,
-            status_code=200,
-            body=body,
             now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        body = claim_service.reject(session, actor, claim_id, payload.reason)
+        idempotency.complete(
+            session, actor=actor, operation="claim.reject", client_key=key, status_code=200, body=body
         )
     return JSONResponse(body, status_code=200)
 
@@ -169,25 +166,25 @@ def dispute_claim(
     request: Request,
     actor: Annotated[str, Depends(current_actor)],
     session: Annotated[Session, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings_dep)],
 ) -> JSONResponse:
     key = request.headers.get("Idempotency-Key")
     body_payload = {"claim_id": claim_id, **payload.model_dump()}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="claim.dispute", client_key=key, payload=body_payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        body = claim_service.dispute(session, actor, claim_id, payload.reason)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="claim.dispute",
             client_key=key,
             payload=body_payload,
-            status_code=200,
-            body=body,
             now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        body = claim_service.dispute(session, actor, claim_id, payload.reason)
+        idempotency.complete(
+            session, actor=actor, operation="claim.dispute", client_key=key, status_code=200, body=body
         )
     return JSONResponse(body, status_code=200)
 
@@ -223,21 +220,25 @@ def confirm_handover(
     key = request.headers.get("Idempotency-Key")
     body_payload = {"claim_id": claim_id, "code": payload.code}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="handover.confirm", client_key=key, payload=body_payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        status_code, body = handover_service.confirm(session, settings, actor, claim_id, payload.code)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="handover.confirm",
             client_key=key,
             payload=body_payload,
+            now=to_db(utcnow()),
+        )
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        status_code, body = handover_service.confirm(session, settings, actor, claim_id, payload.code)
+        idempotency.complete(
+            session,
+            actor=actor,
+            operation="handover.confirm",
+            client_key=key,
             status_code=status_code,
             body=body,
-            now=to_db(utcnow()),
         )
     return JSONResponse(body, status_code=status_code)
 
@@ -254,20 +255,24 @@ def reset_handover(
     key = request.headers.get("Idempotency-Key")
     body_payload = {"claim_id": claim_id, **payload.model_dump()}
     with session.begin():
-        replay = idempotency.check(
-            session, actor=actor, operation="handover.reset", client_key=key, payload=body_payload
-        )
-        if replay:
-            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
-        body = handover_service.reset(session, settings, actor, claim_id, payload.reason)
-        idempotency.remember(
+        replay = idempotency.claim(
             session,
+            settings,
             actor=actor,
             operation="handover.reset",
             client_key=key,
             payload=body_payload,
-            status_code=200,
-            body=body,
             now=to_db(utcnow()),
         )
-    return JSONResponse(body, status_code=200)
+        if replay:
+            return JSONResponse(replay.body, status_code=replay.status_code, headers=REPLAY_HEADER)
+        status_code, body = handover_service.reset(session, settings, actor, claim_id, payload.reason)
+        idempotency.complete(
+            session,
+            actor=actor,
+            operation="handover.reset",
+            client_key=key,
+            status_code=status_code,
+            body=body,
+        )
+    return JSONResponse(body, status_code=status_code)

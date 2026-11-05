@@ -2,6 +2,11 @@
 
 Both are deliberately side-effect free so they can be unit tested without a database and
 their versions can be frozen in evaluation reports.
+
+v1.1 (defect fix): category(35) + recent-time(15) alone cleared the 40 threshold, so every
+recent same-category record was recommended and the negative-recommendation rate was 1.0.
+Candidates now additionally need at least ``MIN_TEXT_OVERLAP`` shared description tokens.
+The v1.0 failure evidence (evidence/matching-evaluation.json) is kept unchanged.
 """
 
 from __future__ import annotations
@@ -10,8 +15,9 @@ import re
 from dataclasses import dataclass
 from datetime import datetime
 
-RULE_VERSION = "rules-v1.0"
+RULE_VERSION = "rules-v1.1"
 MATCH_THRESHOLD = 40
+MIN_TEXT_OVERLAP = 9
 CANDIDATE_LIMIT = 3
 
 WEIGHT_CATEGORY = 35
@@ -102,7 +108,14 @@ class Candidate:
     reasons: tuple[str, ...]
 
 
-def score_pair(
+@dataclass(frozen=True)
+class PairScore:
+    score: int
+    reasons: tuple[str, ...]
+    text_overlap: int
+
+
+def evaluate_pair(
     *,
     lost_title: str,
     lost_description: str,
@@ -114,7 +127,7 @@ def score_pair(
     found_category: str,
     found_location: str,
     found_at: datetime,
-) -> tuple[int, list[str]]:
+) -> PairScore:
     score = 0
     reasons: list[str] = []
 
@@ -137,7 +150,22 @@ def score_pair(
         score += time_score
         reasons.append("时间接近")
 
-    return score, reasons
+    return PairScore(score=score, reasons=tuple(reasons), text_overlap=overlap_count)
+
+
+def score_pair(**kwargs) -> tuple[int, list[str]]:
+    """Backwards-compatible view of :func:`evaluate_pair`."""
+    evaluated = evaluate_pair(**kwargs)
+    return evaluated.score, list(evaluated.reasons)
+
+
+def is_candidate(evaluated: PairScore, *, threshold: int = MATCH_THRESHOLD) -> bool:
+    """Score threshold **and** enough textual evidence.
+
+    The text gate fixes the v1.0 defect: category + time alone reached 50 and recommended
+    every recent same-category record.
+    """
+    return evaluated.score >= threshold and evaluated.text_overlap >= MIN_TEXT_OVERLAP
 
 
 def rank_candidates(
@@ -149,7 +177,7 @@ def rank_candidates(
 ) -> list[Candidate]:
     scored: list[Candidate] = []
     for found in founds:
-        score, reasons = score_pair(
+        evaluated = evaluate_pair(
             lost_title=lost.title,
             lost_description=lost.description,
             lost_category=lost.category,
@@ -161,7 +189,8 @@ def rank_candidates(
             found_location=found.location,
             found_at=found.occurred_at,
         )
-        if score >= threshold:
-            scored.append(Candidate(item_id=found.item_id, score=score, reasons=tuple(reasons)))
+        if not is_candidate(evaluated, threshold=threshold):
+            continue
+        scored.append(Candidate(item_id=found.item_id, score=evaluated.score, reasons=evaluated.reasons))
     scored.sort(key=lambda candidate: (-candidate.score, candidate.item_id))
     return scored[:limit]

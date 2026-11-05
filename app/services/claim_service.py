@@ -30,12 +30,14 @@ def create(session: Session, settings: Settings, actor: str, payload: dict) -> t
         raise AppError(404, "not_found", "招领记录不存在")
     if item.kind != "found":
         raise AppError(422, "not_claimable", "只有拾获记录可以被认领")
+    if item.status != "published":
+        raise AppError(422, "not_claimable", "该记录当前不是可认领状态")
     if item.publisher_user_id == actor:
         raise AppError(422, "not_claimable", "不能认领自己发布的记录")
-    if listing_repo.approved_claim_id(session, item.item_id):
+    if listing_repo.approved_claim_id(session, item.item_id, for_update=True):
         raise AppError(409, "already_approved", "该记录已有获批的认领申请")
 
-    duplicate = claim_repo.find_pending_by(session, item.item_id, actor)
+    duplicate = claim_repo.find_pending_by(session, item.item_id, actor, for_update=True)
     if duplicate is not None:
         return 200, serializers.claim_dto(duplicate, actor)
 
@@ -84,9 +86,8 @@ def approve(session: Session, settings: Settings, actor: str, claim_id: str) -> 
         raise AppError(409, "invalid_transition", "只有待核验的申请可以批准")
     if item is None:
         raise AppError(404, "not_found", "招领记录不存在")
-    if session.get(ItemApproval, claim.item_id) is not None:
+    if listing_repo.approved_claim_id(session, claim.item_id, for_update=True) is not None:
         raise AppError(409, "already_approved", "该记录已有获批的认领申请")
-
     try:
         session.add(
             ItemApproval(item_id=claim.item_id, claim_id=claim.id, approved_at=to_db(now))
@@ -219,7 +220,7 @@ def dispute_export(session: Session, actor: str, claim_id: str) -> dict:
         raise AppError(404, "not_found", "认领申请不存在")
     membership(claim, actor)
     item = listing_repo.get(session, claim.item_id)
-    messages = message_repo.list_after(session, claim.id, after_id=None, limit=500)[0]
+    messages, message_total, messages_truncated = message_repo.list_all(session, claim.id)
     timeline = [
         {
             "at": serializers.iso(event.created_at),
@@ -237,6 +238,8 @@ def dispute_export(session: Session, actor: str, claim_id: str) -> dict:
         "evidence_text": claim.evidence_text,
         "item_number": claim.item_number,
         "dispute_reason": claim.reason,
+        "messages_total": message_total,
+        "messages_truncated": messages_truncated,
         "messages": [
             {
                 "sender_alias": serializers.alias_for(claim.id, message.sender_role),

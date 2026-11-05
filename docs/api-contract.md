@@ -49,7 +49,9 @@
 
 - `my_role`: `applicant|finder`，随调用者变化
 - `reason`: 驳回理由或争议理由
-- 两个布尔值对应交接双确认；非 `APPROVED` 时均为 `false`
+- 两个布尔值对应交接双确认：`APPROVED` 时为实时进度，`COMPLETED` 时保留双方已确认的历史；
+  其余状态（PENDING / REJECTED / WITHDRAWN / CLOSED_OTHER / EXPIRED / DISPUTED）一律为 `false`，
+  避免终态暗示存在确认
 
 **MessageDTO**（**绝不出现 `sender_id`**）
 
@@ -117,9 +119,12 @@
 
 - 201：ClaimDTO
 - 同一人重复提交同一记录：200 + 已有 ClaimDTO
-- 规则：仅 `found` 可认领；不可认领自己发布的记录；同一记录允许多份 PENDING
+- 规则：仅 `found` 且 `status=published` 可认领；不可认领自己发布的记录；同一记录允许多份 PENDING
 
-幂等：`Idempotency-Key` 相同且请求体相同 → 重放首次响应并带 `Idempotent-Replay: true`；请求体变化 → 409 `idempotency_conflict`。
+幂等（v1.0.1）：
+- 键在**业务事务内**预占（占位行与业务结果同事务提交），并发同键不会 500：后到者等待后重放首次响应，带 `Idempotent-Replay: true`。
+- 请求体变化 → 409 `idempotency_conflict`；仍在处理中 → 409 `idempotency_conflict`。
+- 请求指纹是密钥化的域分离 HMAC（actor + operation + body），不是裸 SHA-256；交接码不入幂等缓存。
 
 ### 6.2 查询
 
@@ -152,18 +157,27 @@
   "evidence_text": "包内有蓝色水杯和借书卡",
   "item_number": "ASSET-2026-0042",
   "dispute_reason": "交接地点无法达成一致",
+  "messages_total": 1,
+  "messages_truncated": false,
   "messages": [{"sender_alias": "申请人-0F3C8F", "text": "可以改到食堂门口吗", "created_at": "2026-11-05T08:20:00Z"}]
 }
 ```
+
+`messages` 为**完整**会话（分页读到底）；`messages_total` 是库内总数，只有达到导出上限时
+`messages_truncated=true`，客户端不得把截断结果当成完整记录。
 
 ## 7. 匿名沟通
 
 `GET /v1/claims/{claim_id}/messages?after=&limit=50` → `{"items":[MessageDTO],"next_after":null}`
 
+- 游标是 `(created_at, id)` 的键集游标，同秒消息不会丢失
+- `after` 必须属于本会话，否则 422 `validation_error`（`field=after`）
+
 `POST /v1/claims/{claim_id}/messages` `{"text": "..."}` → 201 MessageDTO
 
 - 仅双方；非成员 403
-- 仅 PENDING / APPROVED / DISPUTED 可发，其余 409
+- 仅 PENDING / APPROVED 可发；**DISPUTED 及其余终态一律 409（只读）**
+- 发送与争议/完成的状态检查在同一事务内串行化（先锁 claim 行），不存在 TOCTOU
 - 服务端硬拦截手机号、邮箱、15/18 位身份证号，命中 422 `contact_info_blocked`，文本**不落库**
 - 已知误伤：以 `1[3-9]` 开头的 11 位纯数字物品编号会被拦；编号应走 `item_number` 私有字段
 - 速率：每人每申请 20 条/分钟，超出 429
@@ -173,8 +187,8 @@
 `GET /v1/matches?item_id=L-2001`
 
 - 仅本人 `lost` 记录：非本人 403，非 lost 422，不存在 404
-- `{"item_id": ..., "rule_version": "rules-v1.0", "threshold": 40, "candidates": [{"item": PublicListingDTO, "score": 86, "reasons": ["类别一致：bag", "描述关键词重合 9 项", "地点一致", "时间接近"]}]}`
-- 最多 3 条，`score ≥ 40`；**不自动批准、不推送**
+- `{"item_id": ..., "rule_version": "rules-v1.1", "threshold": 40, "candidates": [{"item": PublicListingDTO, "score": 86, "reasons": ["类别一致：bag", "描述关键词重合 9 项", "地点一致", "时间接近"]}]}`
+- 最多 3 条；进入候选需同时满足 **`score ≥ 40`** 与 **文本证据 ≥ 9 个重合词元**（v1.0 负例被推荐率 1.0 的修复）；**不自动批准、不推送**
 
 ## 9. 交接码
 
@@ -204,7 +218,9 @@
 
 1. 一个 `item_id` 同时最多一条 APPROVED/COMPLETED 申请（`item_approvals.item_id` 主键）。
 2. 事务锁序固定：`listing_snapshots` → `claims` → `handover_codes`。
-3. 任何接口、日志、错误体、导出都不含身份映射与明文交接码。
+3. 身份映射（真实姓名/手机号/学号）与明文交接码不进入**普通**响应、日志、错误体、导出。
+   唯一例外：`GET /v1/claims/{id}/code` 对已认证的本方返回其**本方**码——这是交接流程的必要输出；
+   码不得写入数据库明文、日志或幂等缓存。
 4. 前端只做纯文本渲染；服务端不返回 HTML 片段。
 
 ## 11. 本地运行（测试协作者按此对接）

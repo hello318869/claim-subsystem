@@ -13,7 +13,12 @@ def get(session: Session, claim_id: str) -> HandoverCode | None:
 
 
 def lock(session: Session, claim_id: str) -> HandoverCode | None:
-    statement = select(HandoverCode).where(HandoverCode.claim_id == claim_id).with_for_update()
+    statement = (
+        select(HandoverCode)
+        .where(HandoverCode.claim_id == claim_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
     return session.execute(statement).scalar_one_or_none()
 
 
