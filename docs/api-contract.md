@@ -211,6 +211,8 @@
 - 200：`{"claim_id","expires_at","reset_count":1,"counterparty_must_refetch":true,"reason":"..."}`
 - 不满足条件 409 `reset_not_allowed`
 - 重置换 nonce、清空双方确认，旧码立即失效
+- **`reason` 可选**（默认空串，去首尾空白后允许为空）；`reject` / `dispute` 的 `reason` 仍必填且
+  `strip()` 后非空。此为 V1.0.1 正式采用的接口口径，**不表示 V1.0 曾强制 reset reason 非空**
 
 码有效期 30 分钟；令牌 60 分钟；交接绝对期限 = 批准后 24 小时。
 
