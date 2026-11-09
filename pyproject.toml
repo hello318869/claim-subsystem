@@ -1,6 +1,6 @@
 [project]
 name = "claim-subsystem"
-version = "1.0.0"
+version = "1.2.0"
 description = "校园失物招领 · 失物认领子系统（FastAPI + MySQL 后端）"
 requires-python = ">=3.11"
 dependencies = [

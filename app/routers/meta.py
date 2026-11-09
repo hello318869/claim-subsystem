@@ -8,6 +8,7 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import text
 
+from app import __version__
 from app.clock import iso, utcnow
 from app.config import ROOT, get_settings
 from app.db import get_session_factory
@@ -31,7 +32,7 @@ def health() -> dict:
         "database": database,
         "demo_mode": get_settings().demo_mode,
         "time": iso(utcnow()),
-        "version": "1.0.0",
+        "version": __version__,
     }
     if database != "ok":
         return JSONResponse(payload, status_code=503)
@@ -45,12 +46,17 @@ def index():
         return FileResponse(candidate)
     return {
         "service": "校园失物招领 · 失物认领子系统",
-        "version": "1.0.0",
+        "version": __version__,
         "status": "backend-only",
         "docs": "/docs",
         "health": "/health",
         "note": "web/ 静态页面尚未就绪；接口前缀 /v1。",
     }
+
+
+@router.get("/team", include_in_schema=False)
+def team_page() -> FileResponse:
+    return FileResponse(WEB_DIR / "team.html")
 
 
 __all__ = ["router", "AppError"]

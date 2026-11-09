@@ -10,9 +10,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app import __version__
 from app.config import ROOT
 from app.errors import install_error_handlers
 from app.routers import chat, claims, demo, listings, matches, meta
+from app.team.api import create_team_app
 
 WEB_DIR = ROOT / "web"
 API_PREFIX = "/v1"
@@ -21,7 +23,7 @@ API_PREFIX = "/v1"
 def create_app() -> FastAPI:
     application = FastAPI(
         title="校园失物招领 · 失物认领子系统",
-        version="1.0.0",
+        version=__version__,
         description=(
             "认领管理、匿名沟通、可解释规则匹配。只读其他成员发布的招领/失物快照，"
             "不实现发布、账号注册与管理裁决。"
@@ -40,6 +42,8 @@ def create_app() -> FastAPI:
     application.include_router(meta.router)
     for router in (demo.router, listings.router, claims.router, chat.router, matches.router):
         application.include_router(router, prefix=API_PREFIX)
+
+    application.mount("/api/v1", create_team_app(), name="team-api")
 
     # Static files are mounted even before web/ exists so a later front-end drop-in needs
     # no code change (only a restart). Directories are not modified here.

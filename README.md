@@ -1,8 +1,42 @@
-# 校园失物招领 · 失物认领子系统（V1.1 交付）
+# 校园失物招领 · 失物认领子系统（v1.2.0）
+
+## 小组联调版
+
+按《共同字段与接口约定-02》v0.3 提供 `/api/v1` 下的认领、站内消息和双向匹配。浏览器打开
+`/team`，接口文档在 `/api/v1/docs`。旧课程演示仍从 `/` 和 `/v1` 访问，使用原有数据。
+
+使用下文的隔离 MySQL 启动步骤后，运行：
+
+```powershell
+python scripts/init_db.py --database dev
+python scripts/seed_team_demo.py --database dev
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+在 `/team` 选择演示身份。可用小林（`alice`）申请小陈（`finder`）的招领，或用小陈申请访客
+（`outsider`）的失物，查看交接提示。发布者审核后，两人分别确认即可完成。演示会话要求
+`DEMO_MODE=true`，刷新页面需要重新登录。
+
+### 接入组员的模块
+
+调用 `app.team.api.create_team_app(identity=..., posts=..., session_dependency=...)` 后，
+把 A、B 的路由加到返回的应用上，由主应用挂载在 `/api/v1`。适配器签名在
+`app/team/contracts.py`。A 解析令牌并返回公开身份摘要，B 提供帖子读取、状态流转和匹配候选。
+前端组内登录使用 A 的 `/auth/login`、`/auth/logout`，帖子列表使用 B 的 `/posts` 和 A 的 `/users/me/posts`。
+
+双方使用同一个 SQLAlchemy Session 和数据库事务。B 的 `get_post_for_claim(lock=True)` 要锁定
+真实帖子行，`set_handover_state` 在事务内更新。先锁帖子，再锁申请，然后处理消息。B 撤回时调用
+`app.team.claims.close_pending_claims`，撤销完成前调用 `has_completed_claim`。内部调用由外层统一提交。
+新申请和消息使用 `team_claims`、`team_claim_messages` 两张表，独立演示另使用 `team_demo_posts`。
+
+约定正文 §6.1 和 §7.1 支持对失物及招领发起申请，因此实现保留两个方向。v0.3 验收表 T05
+对失物类型返回 400 的旧描述需要和组员核对。
+
+## V1.1 课程演示
 
 Python + FastAPI + SQLAlchemy + PyMySQL + **真实 MySQL** 的后端，加上 `web/` 静态前端。
 功能范围只有三块：**认领管理、匿名沟通、可解释规则匹配**，外加双向交接码。
-当前版本：后端 **V1.0.1**，前端 **CR-03 分组（FR-10）**。
+历史基线：后端 **V1.0.1**，前端 **CR-03 分组（FR-10）**。
 
 > 边界：**未对接**其他成员的真实发布/身份服务；**无真实校园数据**（演示数据 `origin=demo`）；
 > **非公网部署**；不实现账号注册、发布、争议裁决、管理后台。
@@ -17,8 +51,7 @@ Python + FastAPI + SQLAlchemy + PyMySQL + **真实 MySQL** 的后端，加上 `w
 | CR-03 分组 FR-10 | **10 项跨阶段回归通过**（RG-01~RG-08、RG-10 首轮；RG-09 修复后限定复测） | `evidence/ui-cr03-validation-attempt1.json`、`ui-cr03-rg09-final-run.json` |
 | 浏览器业务验证 | **15 项通过**；首轮因 `/favicon.ico` 404 记“未完全通过”，修复后干净首屏 0 资源错误 | `evidence/ui-validation.md`、`ui-cr03-validation.json` |
 
-说明：上表是历史证据的汇总；**本轮没有重跑 178 项自动化，也没有重测性能**。数字只对本机、
-隔离 MySQL、给定数据规模有效，不外推到真实校园准确率或公网性能。
+上表记录 V1.1 交付时的验证结果。性能与匹配数据对应当时的本机环境、隔离 MySQL 和样本。
 
 ## 1. 环境要求
 

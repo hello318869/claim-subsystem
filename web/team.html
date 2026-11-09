@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>校园失物认领 · 联调工作台</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23196857'/%3E%3Cpath d='M8 16l5 5 11-11' fill='none' stroke='%23fff' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/team.css">
+  <script src="/static/team.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">跳到认领工作区</a>
+  <header class="masthead">
+    <div class="shell header-layout">
+      <div>
+        <p class="eyebrow">校园失物招领系统</p>
+        <h1>失物认领工作台</h1>
+        <p class="intro">查看公开失物和招领信息，核对匹配线索，与认领双方沟通并确认交接。</p>
+      </div>
+      <section class="session-card" aria-labelledby="session-title">
+        <div class="section-heading">
+          <h2 id="session-title">当前身份</h2>
+          <button id="logout" type="button" class="secondary" hidden>退出</button>
+        </div>
+        <p id="session-info" role="status">访客 · 可浏览公开信息</p>
+        <form id="login-form" class="login-form" hidden>
+          <label>账号 <input name="username" autocomplete="username" required></label>
+          <label>密码 <input name="password" type="password" autocomplete="current-password" required></label>
+          <button type="submit">登录</button>
+        </form>
+        <form id="demo-form" class="demo-form" hidden>
+          <label>演示身份
+            <select name="actor">
+              <option value="alice">alice</option>
+              <option value="bob">bob</option>
+              <option value="finder">finder</option>
+              <option value="outsider">outsider</option>
+            </select>
+          </label>
+          <button class="secondary" type="submit">进入演示</button>
+        </form>
+        <p id="session-error" class="error" role="alert" hidden></p>
+      </section>
+    </div>
+  </header>
+
+  <main id="workspace" class="shell">
+    <nav class="workspace-nav" aria-label="认领工作区">
+      <button type="button" data-view="posts" aria-controls="posts" aria-pressed="true">公开信息</button>
+      <button type="button" data-view="matches" aria-controls="matches" aria-pressed="false">查找匹配</button>
+      <button type="button" data-view="claims" aria-controls="claims" aria-pressed="false">我的认领</button>
+    </nav>
+    <p id="notice" class="notice" role="status" hidden></p>
+
+    <section id="posts" class="workspace-panel" aria-labelledby="posts-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="posts-title">公开信息</h2>
+          <p class="muted">浏览已公开的信息，选择一条记录查看认领条件。</p>
+        </div>
+        <button type="button" data-refresh="posts" class="secondary">刷新</button>
+      </div>
+      <div class="split-layout">
+        <div>
+          <p id="posts-status" class="muted" role="status"></p>
+          <ul id="posts-list" class="card-list" aria-label="公开信息列表"></ul>
+          <nav class="pager" data-pager="posts" aria-label="公开信息分页" hidden>
+            <button type="button" class="secondary" data-step="-1">上一页</button>
+            <span data-page></span>
+            <button type="button" class="secondary" data-step="1">下一页</button>
+          </nav>
+        </div>
+        <div id="application" class="inset" hidden>
+          <h3 id="application-title"></h3>
+          <p id="application-meta" class="muted"></p>
+          <p id="application-hint" class="notice" hidden></p>
+          <p id="application-permission" class="muted"></p>
+          <form id="application-form" hidden>
+            <label for="verification-text">私有认领证明 <span class="muted">10–1000 字，仅认领双方可见</span></label>
+            <textarea id="verification-text" rows="4" required></textarea>
+            <button type="submit">提交认领申请</button>
+          </form>
+          <p id="application-error" class="error" role="alert" hidden></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="matches" class="workspace-panel" aria-labelledby="matches-title" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="matches-title">查找匹配</h2>
+          <p class="muted">从我发布的信息出发查找相反类型的记录。分数用于排序。</p>
+        </div>
+        <button type="button" data-refresh="sources" class="secondary">刷新</button>
+      </div>
+      <div class="split-layout">
+        <div>
+          <p id="sources-status" class="muted" role="status"></p>
+          <ul id="sources-list" class="card-list" aria-label="我的信息"></ul>
+          <nav class="pager" data-pager="sources" aria-label="我的信息分页" hidden>
+            <button type="button" class="secondary" data-step="-1">上一页</button>
+            <span data-page></span>
+            <button type="button" class="secondary" data-step="1">下一页</button>
+          </nav>
+        </div>
+        <div id="match-results" class="inset" hidden>
+          <h3 id="match-title">匹配结果</h3>
+          <p id="match-status" class="muted" role="status"></p>
+          <ul id="match-list" class="card-list" aria-label="匹配候选"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="claims" class="workspace-panel" aria-labelledby="claims-title" hidden>
+      <div class="section-heading">
+        <div>
+          <h2 id="claims-title">我的认领</h2>
+          <p class="muted">申请、沟通和交接记录仅供认领双方查看。</p>
+        </div>
+        <button type="button" data-refresh="claims" class="secondary">刷新</button>
+      </div>
+      <div id="claim-roles" class="filters" role="group" aria-label="认领分组">
+        <button type="button" data-role="applicant" aria-pressed="true">我发起的</button>
+        <button type="button" data-role="publisher" aria-pressed="false">我收到的</button>
+      </div>
+      <div class="split-layout">
+        <div>
+          <p id="claims-status" class="muted" role="status"></p>
+          <ul id="claims-list" class="card-list" aria-label="认领列表"></ul>
+          <nav class="pager" data-pager="claims" aria-label="认领列表分页" hidden>
+            <button type="button" class="secondary" data-step="-1">上一页</button>
+            <span data-page></span>
+            <button type="button" class="secondary" data-step="1">下一页</button>
+          </nav>
+        </div>
+        <div id="claim-detail" class="inset" hidden>
+          <div class="section-heading">
+            <h3 id="claim-title" tabindex="-1"></h3>
+            <button id="refresh-claim" type="button" class="secondary">刷新详情</button>
+          </div>
+          <p id="claim-status" class="muted" role="status"></p>
+          <div id="claim-facts"></div>
+          <p id="handover-hint" class="notice" hidden></p>
+          <div id="claim-actions">
+            <label id="decision-label" hidden>审核说明 <span class="muted">拒绝时必填，最多 500 字</span>
+              <textarea id="decision-note" rows="3"></textarea>
+            </label>
+            <div id="claim-buttons" class="action-row"></div>
+          </div>
+          <p id="claim-error" class="error" role="alert" hidden></p>
+
+          <section id="conversation" class="conversation" aria-labelledby="messages-title" hidden>
+            <div class="section-heading">
+              <h4 id="messages-title">认领沟通</h4>
+              <button id="refresh-messages" type="button" class="secondary">刷新消息</button>
+            </div>
+            <p id="messages-status" class="muted" role="status"></p>
+            <ol id="messages-list" class="messages" aria-label="消息记录" tabindex="0"></ol>
+            <form id="message-form" hidden>
+              <label for="message-content">消息 <span class="muted">1–1000 字，请勿发送敏感个人信息</span></label>
+              <textarea id="message-content" rows="3" required></textarea>
+              <button type="submit">发送消息</button>
+            </form>
+            <p id="messages-error" class="error" role="alert" hidden></p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

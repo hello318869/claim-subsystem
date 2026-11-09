@@ -31,6 +31,7 @@ def main() -> int:
     from app.config import get_settings
     from app.db import get_engine
     from app.models import Base
+    from app.team import demo, models  # noqa: F401  Import table declarations before create_all.
 
     settings = get_settings()
     engine = get_engine()
@@ -47,7 +48,7 @@ def main() -> int:
 
     Base.metadata.create_all(engine)
     after = set(inspect(engine).get_table_names())
-    print(f"environment={settings.environment} tables={len(after)} created=0 dropped=0")
+    print(f"environment={settings.environment} tables={len(after)} created={len(after - existing)} dropped=0")
     for name in sorted(expected):
         print(f"  {'ok' if name in after else 'MISSING'}: {name}")
     return 0
