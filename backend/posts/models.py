@@ -9,12 +9,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.db import models
-from django.db.models.functions import Length
 from django.utils import timezone
-
-# Django 只给 CharField 注册了 length 查找，TextField 要用得自己注册一次。
-# 注册后 description__length 才能用在 CheckConstraint 里（契约 3.5 的 10～2000 字）。
-models.TextField.register_lookup(Length)
 
 
 def new_post_id() -> str:
@@ -126,13 +121,6 @@ class Post(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(fields=["publisher_id", "request_id"], name="uniq_post_publisher_request"),
-            # 契约 3.5：描述必填 10～2000 字。DRF 已校验，这里再兜一层，
-            # 防止绕过接口直接写库（脚本、admin、其它模块）写入非法值。
-            models.CheckConstraint(
-                condition=models.Q(description__length__gte=10)
-                & models.Q(description__length__lte=2000),
-                name="ck_post_description_length",
-            ),
         ]
 
     def save(self, *args, **kwargs):

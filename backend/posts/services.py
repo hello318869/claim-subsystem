@@ -40,6 +40,11 @@ def _require_atomic(entry: str) -> None:
         )
 
 
+def lock_post_rows():
+    """锁住信息行，再用独立查询读取字典，避免锁住其他信息共享的字典行。"""
+    return Post.objects.select_for_update().prefetch_related(*LIST_RELATED)
+
+
 def _records(rows) -> list[PostRecord]:
     rows = list(rows)
     publishers = publisher_summaries(rows)
@@ -50,14 +55,10 @@ def get_post_for_claim(post_id: str, *, lock: bool = False) -> PostRecord | None
     """给 C 读取单条信息；``lock=True`` 时锁行，必须在调用方事务内。"""
     if lock:
         _require_atomic("get_post_for_claim(lock=True)")
-        row = (
-            Post.objects.select_for_update()
-            .select_related(*LIST_RELATED)
-            .filter(pk=post_id)
-            .first()
-        )
-        return post_record(row) if row is not None else None
-    row = Post.objects.select_related(*LIST_RELATED).filter(pk=post_id).first()
+        queryset = lock_post_rows()
+    else:
+        queryset = Post.objects.select_related(*LIST_RELATED)
+    row = queryset.filter(pk=post_id).first()
     return post_record(row) if row is not None else None
 
 
@@ -70,7 +71,7 @@ def get_posts_for_claims(
         return {}
     if lock:
         _require_atomic("get_posts_for_claims(lock=True)")
-        queryset = Post.objects.select_for_update().select_related(*LIST_RELATED)
+        queryset = lock_post_rows().order_by("pk")
     else:
         queryset = Post.objects.select_related(*LIST_RELATED)
     return {
@@ -89,7 +90,7 @@ def set_handover_state(post_id: str, transition: str) -> PostRecord:
     if action is None:
         raise ValueError(f"未知的交接状态转换：{transition}")
 
-    row = Post.objects.select_for_update().select_related(*LIST_RELATED).filter(pk=post_id).first()
+    row = lock_post_rows().filter(pk=post_id).first()
     if row is None:
         raise AppError(404, C.CODE_NOT_FOUND, "信息不存在")
 

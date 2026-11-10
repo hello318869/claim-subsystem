@@ -3,6 +3,7 @@ export const postLabels = { open: '进行中', in_handover: '交接中', complet
 export const closeLabels = { post_withdrawn: '发布者已撤回信息', another_claim_accepted: '发布者选择了其他申请' }
 export const reasonLabels = { category_same: '类别相同 +40', location_same: '地点相同 +30', time_near: '72 小时内 +20', keyword_overlap: '标题相似 +10' }
 export const handoverHint = '对方为校外人员，建议在失物招领处交接'
+export const deletedPublisherMessage = '信息发布者已注销，无法申请认领'
 
 export function availableActions(claim, userId) {
   if (!claim || !userId) return []

@@ -1,4 +1,5 @@
 <script setup>
+import { deletedPublisherMessage } from '../../claims/constants.js'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import NoticeBar from '../components/NoticeBar.vue'
@@ -61,6 +62,7 @@ const readonlyImages = computed(() =>
 
 const publisherVerified = computed(() => post.value?.publisher?.is_campus_verified === true)
 const publisherDemo = computed(() => post.value?.publisher?.verification_mode === 'demo')
+const publisherDeleted = computed(() => post.value?.publisher?.is_deleted === true)
 
 const resolveLength = computed(() => charLength(resolveNote.value))
 
@@ -201,7 +203,7 @@ onMounted(load)
           <span v-if="publisherVerified" class="badge badge--verified">
             {{ publisherDemo ? '演示认证' : '校园已认证' }}
           </span>
-          <span v-else class="badge">未认证校园身份</span>
+          <span v-else-if="!publisherDeleted" class="badge">未认证校园身份</span>
           <span class="detail-meta__sep" aria-hidden="true">·</span>
           <span>发布 {{ formatBeijingDateTime(post.created_at) }}</span>
           <span class="detail-meta__sep" aria-hidden="true">·</span>
@@ -210,8 +212,9 @@ onMounted(load)
       </header>
 
       <div v-if="post.status === 'open'" class="manage-actions">
+        <p v-if="publisherDeleted" class="muted">{{ deletedPublisherMessage }}</p>
         <RouterLink
-          v-if="canManage"
+          v-else-if="canManage"
           class="btn btn--primary"
           :to="{ name: 'post-matches', params: { id: post.id } }"
         >查找匹配</RouterLink>

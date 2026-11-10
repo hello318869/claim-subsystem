@@ -6,7 +6,7 @@ import { errorText } from '../../../shared/http.js'
 import { datetime } from '../../../shared/utils/datetime.js'
 import { getPost, createClaim } from '../api.js'
 import ClaimForm from '../components/ClaimForm.vue'
-import { handoverHint, postLabels } from '../constants.js'
+import { deletedPublisherMessage, handoverHint, postLabels } from '../constants.js'
 
 const route = useRoute(), router = useRouter()
 const post = ref(null), loading = ref(false), busy = ref(false), error = ref(''), uncertain = ref(false)
@@ -25,12 +25,14 @@ watch(() => route.query.post_id, async postId => {
 }, { immediate: true })
 const blocked = computed(() => {
   if (!post.value) return ''
+  if (post.value.publisher.is_deleted) return deletedPublisherMessage
   if (post.value.publisher.id === session.user?.id) return '你不能认领自己发布的物品。'
   if (!session.user?.is_campus_verified) return '请先完成校园身份绑定，再提交认领申请。'
   if (post.value.status !== 'open') return '该物品当前不接受新的认领申请。'
   return ''
 })
-const needsVerification = computed(() => Boolean(session.user) && !session.user.is_campus_verified)
+const needsVerification = computed(() => !post.value?.publisher.is_deleted &&
+  Boolean(session.user) && !session.user.is_campus_verified)
 const bindingTarget = computed(() => ({ path: '/me/campus-binding', query: { next: route.fullPath } }))
 async function submit(verification_text) {
   if (!post.value || busy.value || blocked.value || uncertain.value) return
@@ -55,7 +57,7 @@ async function submit(verification_text) {
   <p v-if="error" class="error" role="alert">{{ error }}</p>
   <template v-if="post">
     <article class="panel source-card"><span class="badge">{{ postLabels[post.status] }}</span><h2>{{ post.title }}</h2><p>{{ post.description }}</p><p class="muted">{{ post.location.name }} · {{ datetime(post.occurred_at) }} · {{ post.publisher.nickname }}</p><p v-if="post.handover_note">交接说明：{{ post.handover_note }}</p></article>
-    <p v-if="post.post_type === 'lost' && post.publisher.is_campus_verified === false" class="notice">{{ handoverHint }}</p>
+    <p v-if="post.post_type === 'lost' && !post.publisher.is_deleted && post.publisher.is_campus_verified === false" class="notice">{{ handoverHint }}</p>
     <div v-if="blocked" class="notice">
       <p>{{ blocked }}</p>
       <RouterLink v-if="needsVerification" class="button" :to="bindingTarget">去完成校园身份认证</RouterLink>

@@ -39,7 +39,8 @@ watch(() => route.params.id, async () => {
 }, { immediate: true })
 const actions = computed(() => availableActions(claim.value, session.user?.id))
 const isApplicant = computed(() => claim.value?.applicant_id === session.user?.id)
-const showHandoverHint = computed(() => isApplicant.value && claim.value?.post?.post_type === 'lost' && claim.value?.publisher?.is_campus_verified === false)
+const showHandoverHint = computed(() => isApplicant.value && claim.value?.post?.post_type === 'lost' &&
+  !claim.value?.publisher?.is_deleted && claim.value?.publisher?.is_campus_verified === false)
 const actionLabels = { accept: '同意认领', reject: '拒绝申请', cancel: '取消申请', 'confirm-handover': '确认交接' }
 const submitLabels = { accept: '确认同意', reject: '确认拒绝', cancel: '确认取消', 'confirm-handover': '我已完成交接' }
 function choose(action) { pendingAction.value = action; note.value = ''; error.value = '' }

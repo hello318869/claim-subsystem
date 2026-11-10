@@ -76,6 +76,7 @@ PATCH_FIELDS = frozenset(
         "location_id",
         "location_detail",
         "occurred_at",
+        "handover_note",
         "image_ids",
     }
 )

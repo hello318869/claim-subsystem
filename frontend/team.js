@@ -277,9 +277,10 @@ function openApplication(post) {
   $("application").hidden = false;
   $("application-title").textContent = post.title;
   $("application-meta").textContent = postMeta(post);
-  show("application-hint", post.post_type === "lost" && post.publisher?.is_campus_verified === false ? HANDOVER_HINT : "");
+  show("application-hint", post.post_type === "lost" && !post.publisher?.is_deleted && post.publisher?.is_campus_verified === false ? HANDOVER_HINT : "");
   let permission = "";
-  if (post.status !== "open") permission = "这条信息当前不接受新的认领申请。";
+  if (post.publisher?.is_deleted) permission = "信息发布者已注销，无法申请认领";
+  else if (post.status !== "open") permission = "这条信息当前不接受新的认领申请。";
   else if (!user) permission = "登录并绑定校园身份后可以提交认领申请。";
   else if (user.id === post.publisher?.id) permission = "你不能认领自己发布的信息。";
   else if (!user.is_campus_verified) permission = "请先完成校园身份绑定。";
@@ -455,7 +456,7 @@ function renderDetail(detail) {
   if (claim.decision_note) facts.append(fact("审核说明", claim.decision_note));
   if (claim.close_reason) facts.append(fact("关闭原因", CLOSE_LABELS[claim.close_reason] ?? claim.close_reason));
   $("claim-facts").replaceChildren(facts);
-  show("handover-hint", role === "applicant" && claim.post?.post_type === "lost" && claim.publisher?.is_campus_verified === false ? HANDOVER_HINT : "");
+  show("handover-hint", role === "applicant" && claim.post?.post_type === "lost" && !claim.publisher?.is_deleted && claim.publisher?.is_campus_verified === false ? HANDOVER_HINT : "");
   renderClaimActions(detail, role);
   $("conversation").hidden = false;
   $("message-form").hidden = !canMessage(claim);

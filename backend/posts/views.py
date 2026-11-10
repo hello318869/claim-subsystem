@@ -75,10 +75,11 @@ def _coerce_image_ids(raw_ids) -> list[int]:
 
 
 def _load_post(pk, *, for_update: bool = False, with_images: bool = True):
-    """按主键取信息；``for_update`` 时锁行（需在事务内），并始终预取字典与图片。"""
-    queryset = Post.objects.select_related(*query.LIST_RELATED)
+    """按主键取信息；``for_update`` 时仅锁定信息行。"""
     if for_update:
-        queryset = queryset.select_for_update()
+        queryset = services.lock_post_rows()
+    else:
+        queryset = Post.objects.select_related(*query.LIST_RELATED)
     if with_images:
         queryset = queryset.prefetch_related("images")
     post = queryset.filter(pk=pk).first()

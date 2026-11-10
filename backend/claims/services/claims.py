@@ -99,6 +99,8 @@ def create_claim(actor: UserSummary, post_id: str, verification_text: str) -> Cl
     post = post_service.get_post_for_claim(post_id, lock=True)
     if post is None or post.status not in PUBLIC_POST_STATUSES:
         raise AppError(404, "NOT_FOUND", "信息不存在")
+    if post.publisher.is_deleted:
+        raise AppError(409, "STATE_CONFLICT", "信息发布者已注销，无法申请认领")
     if post.post_type not in {"lost", "found"}:
         raise AppError(400, "VALIDATION_ERROR", "此信息类型不能申请认领", field="post_id")
     if actor.id == post.publisher.id:

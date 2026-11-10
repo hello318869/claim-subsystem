@@ -15,8 +15,4 @@ class Migration(migrations.Migration):
             name='description',
             field=models.TextField(),
         ),
-        migrations.AddConstraint(
-            model_name='post',
-            constraint=models.CheckConstraint(condition=models.Q(('description__length__gte', 10), ('description__length__lte', 2000)), name='ck_post_description_length'),
-        ),
     ]

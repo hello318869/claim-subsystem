@@ -105,6 +105,7 @@ python backend/manage.py seed_demo_users
 - 普通写接口接收 JSON，图片上传使用 `multipart/form-data`。未知 API 路径返回 JSON `404`。
 - 消息中手机号、邮箱、身份证号会被 `400` 拦截，核验信息通过申请中的私有说明提交。
 - 双方确认前只有一方确认时，状态保持 `accepted`/`in_handover`，取消返回 `409`。
+- 已注销账号的占位摘要带有 `is_deleted: true`。公开信息仍可浏览，已有申请者可查看自己的认领记录，新申请返回 `409 STATE_CONFLICT`。
 
 ## 6. 项目结构
 

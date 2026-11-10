@@ -40,6 +40,7 @@ class UserSummary:
     nickname: str
     is_campus_verified: bool
     verification_mode: str | None
+    is_deleted: bool = False
 
 
 @dataclass(frozen=True)
@@ -65,16 +66,20 @@ def deleted_user_summary(user_id: str) -> UserSummary:
         nickname=DELETED_USER_NICKNAME,
         is_campus_verified=False,
         verification_mode=None,
+        is_deleted=True,
     )
 
 
 def user_summary(user: UserSummary) -> dict:
-    return {
+    data = {
         "id": user.id,
         "nickname": user.nickname,
         "is_campus_verified": user.is_campus_verified,
         "verification_mode": user.verification_mode,
     }
+    if user.is_deleted:
+        data["is_deleted"] = True
+    return data
 
 
 def post_summary(post: Post) -> dict:

@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router'
 import { errorText } from '../../../shared/http.js'
 import { datetime } from '../../../shared/utils/datetime.js'
 import { getMatches, getPost } from '../api.js'
-import { reasonLabels } from '../constants.js'
+import { deletedPublisherMessage, reasonLabels } from '../constants.js'
 const route = useRoute()
 const source = ref(null), items = ref([]), loading = ref(false), error = ref('')
 let generation = 0
@@ -38,7 +38,8 @@ watch(() => route.params.id, load, { immediate: true })
         <div class="section-heading"><span class="tag">{{ item.post.post_type === 'found' ? '招领信息' : '寻物信息' }}</span><span class="score">{{ item.score }}<small>规则分</small></span></div>
         <h2>{{ item.post.title }}</h2><p class="muted">{{ item.post.category.name }} · {{ item.post.location.name }}<br>{{ datetime(item.post.occurred_at) }} · {{ item.post.publisher.nickname }}</p>
         <div class="reason-list"><span v-for="reason in item.reasons" :key="reason">{{ reasonLabels[reason] }}</span></div>
-        <RouterLink class="button" :to="{ path: '/claims/new', query: { post_id: item.post.id } }">核实并申请认领</RouterLink>
+        <p v-if="item.post.publisher.is_deleted" class="muted">{{ deletedPublisherMessage }}</p>
+        <RouterLink v-else class="button" :to="{ path: '/claims/new', query: { post_id: item.post.id } }">核实并申请认领</RouterLink>
       </article>
     </div>
   </template>

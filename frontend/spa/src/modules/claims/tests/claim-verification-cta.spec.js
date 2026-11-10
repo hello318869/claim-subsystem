@@ -76,4 +76,17 @@ describe('认领页的未认证引导', () => {
     expect(wrapper.find('form').exists()).toBe(true)
     expect(wrapper.text()).toContain('对方为校外人员，建议在失物招领处交接')
   })
+
+  it('发布者已注销时关闭申请表单并隐藏校外交接提醒', async () => {
+    session.user = { id: 'u2', nickname: '已认证', is_campus_verified: true }
+    getPost.mockResolvedValue({
+      ...post,
+      post_type: 'lost',
+      publisher: { ...post.publisher, is_campus_verified: false, is_deleted: true },
+    })
+    const { wrapper } = await mountClaimPage()
+    expect(wrapper.text()).toContain('信息发布者已注销，无法申请认领')
+    expect(wrapper.find('form').exists()).toBe(false)
+    expect(wrapper.text()).not.toContain('对方为校外人员')
+  })
 })

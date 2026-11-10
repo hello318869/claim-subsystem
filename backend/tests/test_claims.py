@@ -5,6 +5,8 @@ from __future__ import annotations
 import pytest
 
 from claims.models import Claim
+from common.contracts import DELETED_USER_NICKNAME
+from identity.models import DemoUser
 from tests.support import PROOF, RIVAL_PROOF, apply_claim
 
 pytestmark = pytest.mark.django_db
@@ -67,6 +69,38 @@ def test_claim_against_a_lost_post_is_allowed(actors, make_post):
     )
     assert response.status_code == 201, response.content
     assert response.json()["data"]["publisher"]["id"] == "bob"
+
+
+def test_deleted_publisher_keeps_claim_history_but_rejects_new_claims(actors, anonymous, make_post):
+    post = make_post(post_type="lost")
+    existing = apply_claim(actors, post.id, "alice")
+    DemoUser.objects.filter(pk="finder").delete()
+
+    public_post = anonymous.get(f"/posts/{post.id}")
+    assert public_post.status_code == 200
+    assert public_post.json()["data"]["publisher"]["is_deleted"] is True
+    history = actors["alice"].get(f"/claims/{existing}")
+    assert history.status_code == 200
+    assert history.json()["data"]["publisher"]["is_deleted"] is True
+
+    assert_error(
+        actors["bob"].post("/claims", {"post_id": post.id, "verification_text": RIVAL_PROOF}),
+        409,
+        "STATE_CONFLICT",
+    )
+    assert list(Claim.objects.filter(post_id=post.id).values_list("id", flat=True)) == [existing]
+
+
+def test_publisher_nickname_alone_does_not_mark_account_deleted(actors, make_post):
+    DemoUser.objects.filter(pk="outsider").update(nickname=DELETED_USER_NICKNAME)
+    post = make_post(post_type="lost", publisher_id="outsider")
+    response = actors["alice"].post(
+        "/claims", {"post_id": post.id, "verification_text": PROOF}
+    )
+    assert response.status_code == 201
+    publisher = response.json()["data"]["publisher"]
+    assert publisher["nickname"] == DELETED_USER_NICKNAME
+    assert "is_deleted" not in publisher
 
 
 def test_unverified_actor_gets_identity_required(actors, make_post):
