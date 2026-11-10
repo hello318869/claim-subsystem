@@ -14,7 +14,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from common.clock import iso
-from common.contracts import UserSummary
+from common.contracts import UserSummary, deleted_user_summary
 from common.errors import AppError
 from identity.models import AuthToken, DemoUser
 from users.authentication import resolve_session
@@ -122,4 +122,8 @@ def get_user_summaries(user_ids: set[str]) -> dict[str, UserSummary]:
         user.id: _summary(user)
         for user in DemoUser.objects.filter(pk__in=user_ids - accounts.keys())
     })
+    # v0.5 §7.1：账号已注销、数据被清理或 A 暂时不可用时降级成占位摘要，
+    # 不能因为个别用户缺失就让整页列表或详情失败。
+    for user_id in user_ids - accounts.keys():
+        accounts[user_id] = deleted_user_summary(user_id)
     return accounts

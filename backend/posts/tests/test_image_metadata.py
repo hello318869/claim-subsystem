@@ -23,10 +23,12 @@ class ImageMetadataVisibilityTests(TestCase):
         cls.lost = Post.objects.create(
             publisher_id="b-meta-lost", post_type="lost", title="遗失蓝色钥匙", occurred_at=happened,
             category=category, location=location,
+            description="钥匙在图书馆二楼遗失，蓝色挂绳，钥匙扣是一只小猫。",
         )
         cls.found = Post.objects.create(
             publisher_id="b-meta-found", post_type="found", title="拾到蓝色钥匙", occurred_at=happened,
             category=category, location=location,
+            description="在图书馆二楼靠窗座位拾到一串钥匙，蓝色挂绳。",
         )
 
     def test_public_cover_skips_private_metadata_and_detail_requires_login(self):

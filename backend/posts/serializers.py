@@ -7,14 +7,18 @@
 """
 from rest_framework import serializers
 
-from posts.models import Category, Location
-
-TITLE_MIN, TITLE_MAX = 2, 60
-DESCRIPTION_MIN, DESCRIPTION_MAX = 10, 2000
-HANDOVER_MIN, HANDOVER_MAX = 1, 200
-LOCATION_DETAIL_MAX = 100
-MAX_IMAGES = 6
-KEYWORD_MAX = 50
+from posts import dictionary
+from posts.constants import (
+    DESCRIPTION_MAX,
+    DESCRIPTION_MIN,
+    HANDOVER_MAX,
+    HANDOVER_MIN,
+    KEYWORD_MAX,
+    LOCATION_DETAIL_MAX,
+    MAX_IMAGES,
+    TITLE_MAX,
+    TITLE_MIN,
+)
 
 
 class PostCreateSerializer(serializers.Serializer):
@@ -79,12 +83,12 @@ class PostCreateSerializer(serializers.Serializer):
     )
 
     def validate_category_id(self, value):
-        if not Category.objects.filter(pk=value).exists():
+        if dictionary.get_option(dictionary.KIND_CATEGORY, value) is None:
             raise serializers.ValidationError("分类不存在")
         return value
 
     def validate_location_id(self, value):
-        if not Location.objects.filter(pk=value).exists():
+        if dictionary.get_option(dictionary.KIND_LOCATION, value) is None:
             raise serializers.ValidationError("地点不存在")
         return value
 
@@ -161,12 +165,12 @@ class PostPatchSerializer(serializers.Serializer):
     )
 
     def validate_category_id(self, value):
-        if not Category.objects.filter(pk=value).exists():
+        if dictionary.get_option(dictionary.KIND_CATEGORY, value) is None:
             raise serializers.ValidationError("分类不存在")
         return value
 
     def validate_location_id(self, value):
-        if not Location.objects.filter(pk=value).exists():
+        if dictionary.get_option(dictionary.KIND_LOCATION, value) is None:
             raise serializers.ValidationError("地点不存在")
         return value
 
