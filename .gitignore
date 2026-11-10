@@ -18,6 +18,7 @@ coverage.xml
 .ruff_cache/
 
 # Runtime artefacts
+node_modules/
 *.log
 *.sqlite3
 *.db

@@ -1,0 +1,357 @@
+/* ===== 基础变量与重置 ===== */
+.posts-surface {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-soft: #f3f5fa;
+  --text: #1b2130;
+  --text-soft: #3f4759;
+  --muted: #6b7385;
+  --line: #e3e7ef;
+  --line-strong: #cfd6e4;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-soft: #eef4ff;
+  --focus: #93b4fb;
+  --radius: 12px;
+  --shadow: 0 10px 24px #0f172a12;
+  color-scheme: light;
+  color: var(--text);
+  font-family:
+    'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'Noto Sans SC', system-ui,
+    -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+@scope (.posts-surface) {
+a {
+  color: var(--primary-dark);
+}
+
+img {
+  max-width: 100%;
+}
+
+/* ===== 布局 ===== */
+.container {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+.view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: clamp(20px, 2.6vw, 25px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.page-subtitle {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: var(--text-soft);
+}
+
+/* ===== 通用组件 ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card__title-hint {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.card__hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.card__empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.btn--outline {
+  background: var(--surface);
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.btn--outline:hover:not(:disabled) {
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-soft);
+  border-color: transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+.btn--sm {
+  padding: 6px 11px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: #9aa2b3;
+}
+
+.input:hover:not(:disabled) {
+  border-color: #b9c2d4;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+
+.input[aria-invalid='true'] {
+  border-color: #dc2626;
+  background: #fffafa;
+}
+
+.input[aria-invalid='true']:focus {
+  box-shadow: 0 0 0 3px #fecaca;
+}
+
+.input--sm {
+  padding: 5px 8px;
+  font-size: 13px;
+  width: auto;
+}
+
+.input--datetime {
+  max-width: 320px;
+}
+
+select.input {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #7a8397 50%),
+    linear-gradient(135deg, #7a8397 50%, transparent 50%);
+  background-position:
+    calc(100% - 17px) calc(50% - 2px),
+    calc(100% - 12px) calc(50% - 2px);
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
+textarea.input {
+  resize: vertical;
+  line-height: 1.7;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+  min-width: 0;
+}
+
+.field--inline {
+  gap: 4px;
+}
+
+.field__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+.field__hint {
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.field__counter {
+  align-self: flex-end;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.field__counter.is-over {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.field__error {
+  margin: 0;
+  font-size: 12.5px;
+  color: #b91c1c;
+  line-height: 1.5;
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.check input {
+  margin-top: 3px;
+  flex: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--surface-soft);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.badge--ok {
+  background: #e6f6f3;
+  color: #0f766e;
+  border-color: #bfe7dd;
+}
+
+.badge--verified {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  border-color: #c7dbfa;
+}
+
+.chip {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  background: var(--surface-soft);
+  color: var(--text-soft);
+}
+
+.chip--muted {
+  color: var(--muted);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  .btn {
+    padding: 9px 13px;
+  }
+}
+}
+

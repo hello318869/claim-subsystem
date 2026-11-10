@@ -4,6 +4,8 @@
 范围：失物认领子系统（C）按《共同字段与接口约定-02》v0.3 从 FastAPI 迁到 Django。
 A（账号/校园身份）与 B（信息发布）仍为本地演示适配器，不随本次迁移实现。
 
+目录拆分后，本文的 Django 源码和测试路径相对于 `backend/`。联调页面的静态文件位于 `frontend/`。
+
 ## 1. 为什么这样改
 
 | 诉求 | 处理 |
@@ -119,4 +121,4 @@ A（账号/校园身份）与 B（信息发布）仍为本地演示适配器，�
 | T13 无效/过期令牌 401、伪造身份字段 400 | `tests/test_contract_envelope.py`、`tests/test_claims.py` |
 | T14 事务内故障全部回滚 | `test_concurrency.py::test_adapter_failure_rolls_back_claim_and_post_writes` |
 
-运行：`python -m pytest`（需先启动隔离 MySQL；测试库 `claim_test`，`--reuse-db`）。
+先启动隔离 MySQL，再从项目根目录运行 `python -m pytest backend`。测试使用 `claim_test` 和 `--reuse-db`。
