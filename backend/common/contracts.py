@@ -12,7 +12,20 @@ from datetime import datetime
 
 from common.clock import iso
 
-POST_IMAGE_FIELDS = ("id", "url", "mime_type", "size_bytes", "sort_order", "alt_text")
+#: PostImageView 的字段与顺序（契约 3.6 L274：上传返回的字段含 is_public）
+POST_IMAGE_FIELDS = (
+    "id",
+    "url",
+    "mime_type",
+    "size_bytes",
+    "sort_order",
+    "alt_text",
+    "is_public",
+)
+
+#: v0.5 §7.1：get_user_summaries 查不到的用户以占位摘要返回，
+#: 调用方不得因个别用户缺失而中断列表或详情。
+DELETED_USER_NICKNAME = "已注销用户"
 
 
 @dataclass(frozen=True)
@@ -43,6 +56,16 @@ class Post:
     publisher: UserSummary
     created_at: datetime
     updated_at: datetime
+
+
+def deleted_user_summary(user_id: str) -> UserSummary:
+    """查不到的用户使用的占位摘要（v0.5 §7.1）。"""
+    return UserSummary(
+        id=str(user_id),
+        nickname=DELETED_USER_NICKNAME,
+        is_campus_verified=False,
+        verification_mode=None,
+    )
 
 
 def user_summary(user: UserSummary) -> dict:

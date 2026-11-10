@@ -15,6 +15,8 @@ from common.views import api_not_found, health, team_page, workbench_page
 
 urlpatterns = [
     path("health", health, name="health"),
+    # 契约 5.5：所有接口都带 /api/v1 前缀，/health 同理；根路径那条保留作为运维便利
+    path("api/v1/health", health, name="health-api"),
     path("workbench", workbench_page, name="workbench-page"),
     re_path(
         r"^static/(?P<path>team\.(?:html|js|css)|index\.html|app\.js|styles\.css)$",

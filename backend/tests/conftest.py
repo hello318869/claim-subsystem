@@ -101,7 +101,7 @@ def make_post(reference_data):
         values = {
             "post_type": "found",
             "title": "图书馆拾到蓝色水杯",
-            "description": "",
+            "description": "图书馆一楼自习区拾到蓝色水杯，杯身有白色条纹，请说明遗失时间与位置。",
             "category_id": "daily",
             "location_id": "library",
             "status": "open",

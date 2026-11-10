@@ -9,7 +9,12 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.db import models
+from django.db.models.functions import Length
 from django.utils import timezone
+
+# Django 只给 CharField 注册了 length 查找，TextField 要用得自己注册一次。
+# 注册后 description__length 才能用在 CheckConstraint 里（契约 3.5 的 10～2000 字）。
+models.TextField.register_lookup(Length)
 
 
 def new_post_id() -> str:
@@ -89,12 +94,14 @@ class Post(models.Model):
         ("completed", "已完成"),
         ("withdrawn", "已撤回"),
     ]
-    PUBLIC_STATUSES = ("open", "in_handover", "completed")
+    #: 公开列表默认展示的状态（契约 3.5：open 与 in_handover；completed 需显式筛选）
+    #: 权威定义在 posts.constants.PUBLIC_STATUSES，这里同步一份供模型层引用。
+    PUBLIC_STATUSES = ("open", "in_handover")
 
     id = models.CharField(primary_key=True, max_length=64, default=new_post_id)
     post_type = models.CharField(max_length=8, choices=POST_TYPES)
     title = models.CharField(max_length=60)
-    description = models.TextField(blank=True, default="")
+    description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="posts")
     location = models.ForeignKey(Location, on_delete=models.PROTECT, related_name="posts")
     location_detail = models.CharField(max_length=100, blank=True, default="")
@@ -119,7 +126,22 @@ class Post(models.Model):
         ]
         constraints = [
             models.UniqueConstraint(fields=["publisher_id", "request_id"], name="uniq_post_publisher_request"),
+            # 契约 3.5：描述必填 10～2000 字。DRF 已校验，这里再兜一层，
+            # 防止绕过接口直接写库（脚本、admin、其它模块）写入非法值。
+            models.CheckConstraint(
+                condition=models.Q(description__length__gte=10)
+                & models.Q(description__length__lte=2000),
+                name="ck_post_description_length",
+            ),
         ]
+
+    def save(self, *args, **kwargs):
+        """任何保存都刷新 ``updated_at``（契约 3.9 要求它反映最近一次修改）。"""
+        self.updated_at = timezone.now()
+        update_fields = kwargs.get("update_fields")
+        if update_fields is not None:
+            kwargs["update_fields"] = set(update_fields) | {"updated_at"}
+        super().save(*args, **kwargs)
 
     @property
     def campus_id(self) -> str:
@@ -151,4 +173,14 @@ class PostImage(models.Model):
         self.size_bytes = len(data)
 
     def delete_file(self) -> None:
-        self.file.delete(save=False)
+        """删除私有存储里的文件；文件字段为空或文件已丢失时不抛异常。
+
+        ``cleanup_images`` 会批量清理未绑定图片，历史数据里可能已经有 file 为空的记录，
+        缺少这层保护会让整条清理命令在中途中断（后续图片都删不掉）。
+        """
+        if not self.file:
+            return
+        try:
+            self.file.delete(save=False)
+        except FileNotFoundError:
+            return

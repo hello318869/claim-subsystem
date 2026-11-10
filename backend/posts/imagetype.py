@@ -42,7 +42,9 @@ def detect_image_mime(data: bytes) -> str:
         with Image.open(io.BytesIO(data)) as image:
             image.verify()
             fmt = (image.format or "").upper()
-    except (UnidentifiedImageError, OSError, ValueError):
+    except (UnidentifiedImageError, OSError, ValueError, SyntaxError):
+        # Pillow 对损坏的 PNG 抛 SyntaxError（如 bad header checksum），
+        # 只捕 OSError/ValueError 会让损坏文件变成 500 而不是 415。
         raise ApiError(415, "UNSUPPORTED_MEDIA_TYPE", "图片格式不支持，仅支持 jpeg/png/webp")
 
     mapping = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
