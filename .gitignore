@@ -25,6 +25,5 @@ tmp/
 dist/
 build/
 
-# Regenerated test manifests and release statistics
-tests/fixtures/seed-world.json
+# Regenerated release statistics
 evidence/statistics/
